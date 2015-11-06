@@ -43,3 +43,12 @@ BridgeRCompare <- function(InputFile="BridgeR_5_HalfLife_calculation.txt", Infor
     BridgeRHalfLifeDifferenceHist(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, BinwidthFig=0.01, OutputFig="BridgeR_5_HalfLife_Difference_LineGraph")
     BridgeRHalfLifeDifferenceBox(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, OutputFig= "BridgeR_5_HalfLife_Comparison_BoxPlot")
 }
+
+BridgeRCalibration <- function(InputFile="BridgeR_5_HalfLife_calculation.txt", InforColumn=4, group, hour, ComparisonFile){
+    library(data.table)
+    library(ggplot2)
+    BridgeRHalfLifeCalibration(InputFile=InputFile, group=group, hour=hour, ComparisonFile=ComparisonFile, InforColumn=4, OutputFile="BridgeR_6_HalfLife_Calibration")
+    BridgeRHalfLifeComparison(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, LogScale=F, Calibration=T, OutputFig="BridgeR_6_Adjusted_HalfLife_Comparison_ScatteredPlot")
+    BridgeRHalfLifeDifferenceHist(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, BinwidthFig=0.01, Calibration=T, OutputFig="BridgeR_6_Adjusted_HalfLife_Difference_LineGraph")
+    BridgeRHalfLifeDifferenceBox(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, Calibration=T, OutputFig= "BridgeR_6_Adjusted_HalfLife_Comparison_BoxPlot")
+}

@@ -4,7 +4,7 @@
 #Date: 2015-10-09
 
 ###Decay_rate_Infor_function###
-BridgeRHalfLifeComparison <- function(filename = "BridgeR_5_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, LogScale=F, OutputFig = "BridgeR_6_Half-life_comparison"){
+BridgeRHalfLifeComparison <- function(filename = "BridgeR_5_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, LogScale=F, Calibration=F, OutputFig = "BridgeR_6_Half-life_comparison"){
     #ComparisonFile: The length of vector must be 2 => c("Control","Knockdown")
     ###Prepare_file_infor###
     time_points <- length(hour)
@@ -20,10 +20,28 @@ BridgeRHalfLifeComparison <- function(filename = "BridgeR_5_half-life_calculatio
     
     ###Plot_Half-life_comparison###
     half_life_column_1 <- comp_file_number[1]*(time_points + InforColumn + 8) #number
-    half_1 <- input_file[[half_life_column_1]]
+    half_1 <- as.numeric(input_file[[half_life_column_1]])
     half_life_column_2 <- comp_file_number[2]*(time_points + InforColumn + 8) #number
-    half_2 <- input_file[[half_life_column_2]]
+    half_2 <- as.numeric(input_file[[half_life_column_2]])
+
+    half_data <- data.table(half1=half_1,half2=half_2)
+    
+    if(Calibration == T){
+        test <- lm(half2 ~ half1 + 0, data=half_data)
+        coef <- as.numeric(test$coefficients)
+        half_2 <- half_2/coef
         
+        half_2_r <- NULL
+        for(x in half_2){
+            if(is.na(x)){
+            }else if(x >= 24){
+                x <- 24
+            }
+            half_2_r <- append(half_2_r,x)
+        }
+        half_2 <- half_2_r
+    }
+
     gene_number <- length(half_1)
     half_1_fig <- NULL
     half_2_fig <- NULL
@@ -141,7 +159,7 @@ BridgeRHalfLifeDistribution <- function(filename = "BridgeR_4_half-life_calculat
     plot.new()
 }
 
-BridgeRHalfLifeDifferenceHist <- function(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, BinwidthFig = 0.01, OutputFig = "BridgeR_5_Half-life_difference_Histgram"){
+BridgeRHalfLifeDifferenceHist <- function(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, BinwidthFig = 0.01, Calibration = F, OutputFig = "BridgeR_5_Half-life_difference_Histgram"){
     #ComparisonFile: The length of vector must be 2 => c("Control","Knockdown")
     ###Prepare_file_infor###
     time_points <- length(hour)
@@ -157,9 +175,36 @@ BridgeRHalfLifeDifferenceHist <- function(filename = "BridgeR_4_half-life_calcul
     
     ###Plot_Half-life_comparison###
     half_life_column_1 <- comp_file_number[1]*(time_points + InforColumn + 8) #number
-    half_1 <- input_file[[half_life_column_1]]
+    half_1 <- as.numeric(input_file[[half_life_column_1]])
     half_life_column_2 <- comp_file_number[2]*(time_points + InforColumn + 8) #number
-    half_2 <- input_file[[half_life_column_2]]
+    half_2 <- as.numeric(input_file[[half_life_column_2]])
+    half_2_r <- NULL
+    for(x in half_2){
+        if(is.na(x)){
+        }else if(x >= 24){
+            x <- 24
+        }
+        half_2_r <- append(half_2_r,x)
+    }
+    half_2 <- half_2_r
+    half_data <- data.table(half1=half_1,half2=half_2)
+    
+    if(Calibration == T){
+        test <- lm(half2 ~ half1 + 0, data=half_data)
+        coef <- as.numeric(test$coefficients)
+        half_2 <- half_2/coef
+        
+        half_2_r <- NULL
+        for(x in half_2){
+            if(is.na(x)){
+            }else if(x >= 24){
+                x <- 24
+            }
+            half_2_r <- append(half_2_r,x)
+        }
+        half_2 <- half_2_r
+    }
+    
     div_half <- log2(half_2/half_1)
     
     print(summary(half_1))
@@ -186,7 +231,7 @@ BridgeRHalfLifeDifferenceHist <- function(filename = "BridgeR_4_half-life_calcul
     plot.new()
 }
 
-BridgeRHalfLifeDifferenceBox <- function(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, OutputFig = "BridgeR_5_Half-life_difference_Boxplot"){
+BridgeRHalfLifeDifferenceBox <- function(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, Calibration = F, OutputFig = "BridgeR_5_Half-life_difference_Boxplot"){
     #ComparisonFile: The length of vector must be 2 => c("Control","Knockdown")
     ###Prepare_file_infor###
     time_points <- length(hour)
@@ -203,15 +248,42 @@ BridgeRHalfLifeDifferenceBox <- function(filename = "BridgeR_4_half-life_calcula
     
     ###Plot_Half-life_comparison###
     half_life_column_1 <- comp_file_number[1]*(time_points + InforColumn + 8) #number
-    half_1 <- input_file[[half_life_column_1]]
+    half_1 <- as.numeric(input_file[[half_life_column_1]])
+    half_life_column_2 <- comp_file_number[2]*(time_points + InforColumn + 8) #number
+    half_2 <- as.numeric(input_file[[half_life_column_2]])
+    half_2_r <- NULL
+    for(x in half_2){
+        if(is.na(x)){
+        }else if(x >= 24){
+            x <- 24
+        }
+        half_2_r <- append(half_2_r,x)
+    }
+    half_2 <- half_2_r
+    half_data <- data.table(half1=half_1,half2=half_2)
+    
+    if(Calibration == T){
+        test <- lm(half2 ~ half1 + 0, data=half_data)
+        coef <- as.numeric(test$coefficients)
+        half_2 <- half_2/coef
+        
+        half_2_r <- NULL
+        for(x in half_2){
+            if(is.na(x)){
+            }else if(x >= 24){
+                x <- 24
+            }
+            half_2_r <- append(half_2_r,x)
+        }
+        half_2 <- half_2_r
+    }
+    
     half_1 <- half_1[!is.na(half_1)]
     half_1_number <- length(half_1)
     half_1_label <- rep(ComparisonFile[1],half_1_number)
     plot_data_1 <- data.frame(half_1,half_1_label)
     colnames(plot_data_1) <- c("half_data","label")
     
-    half_life_column_2 <- comp_file_number[2]*(time_points + InforColumn + 8) #number
-    half_2 <- input_file[[half_life_column_2]]
     half_2 <- half_2[!is.na(half_2)]
     half_2_number <- length(half_2)
     half_2_label <- rep(ComparisonFile[2],half_2_number)

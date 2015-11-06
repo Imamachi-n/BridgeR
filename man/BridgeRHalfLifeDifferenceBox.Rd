@@ -8,7 +8,7 @@ Draw boxplot to compare RNA half-life distribution between two conditions.
 Draw boxplot to compare RNA half-life distribution between two conditions.
 }
 \usage{
-BridgeRHalfLifeDifferenceBox(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, OutputFig = "BridgeR_5_Half-life_difference_Boxplot")
+BridgeRHalfLifeDifferenceBox(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, Calibration = F, OutputFig = "BridgeR_5_Half-life_difference_Boxplot")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +26,9 @@ Vector(string)
 }
   \item{InforColumn}{
 Integer
+}
+  \item{Calibration}{
+Bool(True or False)
 }
   \item{OutputFig}{
 File path/name

@@ -8,7 +8,7 @@ Draw histgram to compare RNA half-life difference between two conditions.
 Draw histgram to compare RNA half-life difference between two conditions.
 }
 \usage{
-BridgeRHalfLifeDifferenceHist(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, BinwidthFig = 0.01, OutputFig = "BridgeR_5_Half-life_difference_Histgram")
+BridgeRHalfLifeDifferenceHist(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, BinwidthFig = 0.01, Calibration = F, OutputFig = "BridgeR_5_Half-life_difference_Histgram")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,6 +29,9 @@ Integer
 }
   \item{BinwidthFig}{
 Number(Integer or Float)
+}
+  \item{Calibration}{
+Bool(True or False)
 }
   \item{OutputFig}{
 File path/name

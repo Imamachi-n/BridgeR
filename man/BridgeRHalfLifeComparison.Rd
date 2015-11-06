@@ -8,7 +8,7 @@ Draw scattered plot to compare RNA half-life between two conditions.
 Draw scattered plot to compare RNA half-life between two conditions.
 }
 \usage{
-BridgeRHalfLifeComparison(filename = "BridgeR_5_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, LogScale = F, OutputFig = "BridgeR_6_Half-life_comparison")
+BridgeRHalfLifeComparison(filename = "BridgeR_5_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, LogScale = F, Calibration=F, OutputFig = "BridgeR_6_Half-life_comparison")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,6 +28,9 @@ Vector(string)
 Integer
 }
   \item{LogScale}{
+Bool(True or False)
+}
+  \item{Calibration}{
 Bool(True or False)
 }
   \item{OutputFig}{

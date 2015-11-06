@@ -9,7 +9,7 @@ ggplot2
 ##Install
 ###Linux
 ```
-R CMD build BridgeR
+sudo R CMD INSTALL BridgeR
 ```
 ###Windows
 (1)Update the path variables on your Windows computer(64-bit)

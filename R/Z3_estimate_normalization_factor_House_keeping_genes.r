@@ -12,14 +12,12 @@ BridgeRNormalizationFactorsHK <- function(InputFile, group, hour, InforColumn = 
     
     ###Output_file_infor###nfname
     hour_label <- NULL
-    for(a in 1:group_number){
-        for(x in hour){
-            label <- x
-            if(x < 10){
-                label <- paste("0",x,sep="")
-            }
-            hour_label <- append(hour_label, paste("T", label, "_", a, sep=""))
+    for(x in hour){
+        label <- x
+        if(x < 10){
+            label <- paste("0",x,sep="")
         }
+        hour_label <- append(hour_label, paste("T", label, "_0", sep=""))
     }
     cat('Sample',hour_label, sep="\t", file=OutputFile)
     cat("\n", file=OutputFile, append=T)
@@ -50,9 +48,9 @@ BridgeRNormalizationFactorsHK <- function(InputFile, group, hour, InforColumn = 
         nf <- NULL
         for(x in 1:length(HKGenes_raw_data)){
             if(x == 1){
-                nf <- as.vector(as.matrix(HKGenes_raw_data[x,]))
+                nf <- as.numeric(as.vector(as.matrix(HKGenes_raw_data[x,])))
             }else{
-                nf <- HKGenes_raw_data[x,] * nf
+                nf <- as.numeric(HKGenes_raw_data[x,]) * nf
             }
         }
         nf <- nf^(1/length(HKGenes))

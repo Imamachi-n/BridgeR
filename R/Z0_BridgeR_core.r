@@ -35,7 +35,7 @@ BridgeRCustom <- function(YourNormFactor, InputFiles, InforColumn=4, group, hour
     BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, CutoffRelExp=CutoffRelExp, CutoffDataPoint=CutoffDataPoint, OutputFile="BridgeR_5_HalfLife_calculation.txt")
 }
 
-BridgeRCompare <- function(InputFile, InforColumn=4, group, hour, ComparisonFile){
+BridgeRCompare <- function(InputFile="BridgeR_5_HalfLife_calculation.txt", InforColumn=4, group, hour, ComparisonFile){
     library(data.table)
     library(ggplot2)
     BridgeRHalfLifeComparison(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, LogScale=F, OutputFig="BridgeR_5_HalfLife_Comparison_ScatteredPlot")

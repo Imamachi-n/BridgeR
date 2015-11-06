@@ -12,12 +12,14 @@ BridgeRNormalizationFactorsHK <- function(InputFile, group, hour, InforColumn = 
     
     ###Output_file_infor###nfname
     hour_label <- NULL
-    for(x in hour){
-        label <- x
-        if(x < 10){
-            label <- paste("0",x,sep="")
+    for(a in 1:group_number){
+        for(x in hour){
+            label <- x
+            if(x < 10){
+                label <- paste("0",x,sep="")
+            }
+            hour_label <- append(hour_label, paste("T", label, "_", a, sep=""))
         }
-        hour_label <- append(hour_label, paste("T", label, "_", a, sep=""))
     }
     cat('Sample',hour_label, sep="\t", file=OutputFile)
     cat("\n", file=OutputFile, append=T)

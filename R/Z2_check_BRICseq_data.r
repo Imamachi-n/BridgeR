@@ -34,13 +34,13 @@ BridgeRDatasetChecker <- function(InputFile, group, hour, InforColumn=4, OutputF
     sample_size <- length(group)
     test_data <- NULL #input data for fig
     if(sample_size == 1){
-        test_data <- input_file[T00_1 == 1,]
+        test_data <- input_file[input_file$T00_1 == 1,]
     }else if(sample_size == 2){
-        test_data <- input_file[T00_1 == 1 & T00_2 == 1,]
+        test_data <- input_file[input_file$T00_1 == 1 & input_file$T00_2 == 1,]
     }else if(sample_size == 3){
-        test_data <- input_file[T00_1 == 1 & T00_2 == 1 & T00_3 == 1,]
+        test_data <- input_file[input_file$T00_1 == 1 & input_file$T00_2 == 1 & input_file$T00_3 == 1,]
     }else if(sample_size == 4){
-        test_data <- input_file[T00_1 == 1 & T00_2 == 1 & T00_3 == 1 & T00_4 == 1,]
+        test_data <- input_file[input_file$T00_1 == 1 & input_file$T00_2 == 1 & input_file$T00_3 == 1 & input_file$T00_4 == 1,]
     }
     
     ###Boxplot_for_each_sample###

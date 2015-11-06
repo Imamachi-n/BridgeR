@@ -1,5 +1,5 @@
 # BridgeR
-An R library for comprehensive BRIC-seq data analysis tool
+An R library for comprehensive BRIC-seq data analysis tool.  
 BridgeR library was made under R version 3.2.2.
 ***
 ##Required R libraries

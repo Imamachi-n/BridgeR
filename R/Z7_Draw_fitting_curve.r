@@ -4,10 +4,14 @@
 #Date: 2015-10-08
 
 ###Draw_fitting_curve_function###
+#BridgeRSimpleDraw <- function(filename, group, hour, ComparisonFile, CutoffRelExp = 0.1, CutoffDataPoint = 3, InforColumn = 4, OutputDir = "BridgeR_fig"){
+#    
+#}
+
 BridgeRDrawFittingCurve <- function(filename, group, hour, ComparisonFile, CutoffRelExp = 0.1, CutoffDataPoint = 3, InforColumn = 4, OutputDir = "BridgeR_fig", OutputFile = "BridgeR_4_HalfLife_Pvalue.txt"){
     ###Import_library###
-    library(data.table)
-    library(ggplot2)
+    #library(data.table)
+    #library(ggplot2)
     
     ###Make_stored_directory###
     ComparisonFile_name = paste(ComparisonFile,collapse="_")

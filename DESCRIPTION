@@ -5,6 +5,8 @@ Version: 0.1
 Date: 2015-11-05
 Author: Naoto Imamachi
 Maintainer: Naoto Imamachi <naoto.imamachi@gmail.com>
+Imports: data.table, ggplot2
+Depends: data.table, ggplot2
 Description: 
     An R library for comprehensive BRIC-seq data analysis.
 License: MIT + file LICENSE

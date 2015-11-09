@@ -8,7 +8,7 @@ Default BRIC-seq data analysis pipeline
 RNA half-life for each gene is calculated using 99-97.5 percentile normalization.
 }
 \usage{
-BridgeRCore(InputFiles, InforColumn = 4, group, hour, RPKMcutoff = 0.1, RelRPKMFig = F, SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3)
+BridgeRCore(InputFiles, InforColumn = 4, group, hour, RPKMcutoff = 0.1, RelRPKMFig = F, SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3, UseOldModel=F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +38,9 @@ Float
 }
   \item{CutoffDataPoint}{
 Integer
+}
+  \item{UseOldModel}{
+Bool(True or False)
 }
 }
 \details{
@@ -81,7 +84,7 @@ Naoto Imamachi
 ## The function is currently defined as
 function (InputFiles, InforColumn = 4, group, hour, RPKMcutoff = 0.1, 
     RelRPKMFig = F, SelectNormFactor = T, CutoffRelExp = 0.1, 
-    CutoffDataPoint = 3) 
+    CutoffDataPoint = 3, UseOldModel=F) 
 {
     library(data.table)
     library(ggplot2)

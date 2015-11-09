@@ -4,11 +4,94 @@
 #Date: 2015-10-08
 
 ###Draw_fitting_curve_function###
-#BridgeRSimpleDraw <- function(filename, group, hour, ComparisonFile, CutoffRelExp = 0.1, CutoffDataPoint = 3, InforColumn = 4, OutputDir = "BridgeR_fig"){
-#    
-#}
+BridgeRSimpleDraw <- function(filename="BridgeR_4_Normalized_expression_dataset.txt", group, hour, ComparisonFile, CutoffRelExp = 0.1, CutoffDataPoint = 3, InforColumn = 4, OutputDir = "BridgeR_simple_fig"){
+    ###Make_stored_directory###
+    ComparisonFile_name = paste(ComparisonFile,collapse="_")
+    output_dir_name <- paste(OutputDir,ComparisonFile_name,sep="_")
+    dir.create(output_dir_name)
+    
+    ###Prepare_file_infor###
+    time_points <- length(hour)
+    group_number <- length(group)
+    input_file <- fread(filename, header=T)
+    comp_file_number <- NULL
+    for(a in 1:length(ComparisonFile)){
+        comp_file_number <- append(comp_file_number, which(group == ComparisonFile[a]))
+    }
+    
+    #setwd(output_dir_name)
+    
+    ###Draw_fitting_curve###
+    gene_number <- length(input_file[[1]])
+    for(x in 1:gene_number){
+        data <- as.vector(as.matrix(input_file[x,]))
+        
+        #Save_fig
+        gene_name <- as.character(data[2])
+        file_name <- sprintf("%1$s.png",gene_name)
+        file_name <- paste(output_dir_name,"/",file_name,sep="")
+        png(filename=file_name,width = 640, height = 640)
+        
+        #Prepare_ggplot2
+        p.fitting <- ggplot()
+        
+        flg <- 0
+        fig_color <- NULL
+        for(a in comp_file_number){
+            if(flg == 0){
+                fig_color <- "black"
+            }else{
+                fig_color <- "red"
+            }
+            infor_st <- 1 + (a - 1)*(time_points + InforColumn)
+            infor_ed <- (InforColumn)*a + (a - 1)*(time_points)
+            exp_st <- infor_ed + 1
+            exp_ed <- infor_ed + time_points
 
-BridgeRDrawFittingCurve <- function(filename, group, hour, ComparisonFile, CutoffRelExp = 0.1, CutoffDataPoint = 3, InforColumn = 4, OutputDir = "BridgeR_fig", OutputFile = "BridgeR_4_HalfLife_Pvalue.txt"){
+            #gene_infor <- data[infor_st:infor_ed]
+            exp <- as.numeric(data[exp_st:exp_ed])
+            time_point_exp_original <- data.frame(hour,exp)
+            
+            p.fitting <- p.fitting + layer(data=time_point_exp_original, 
+                                           mapping=aes(x=hour, y=exp), 
+                                           geom="point",
+                                           size=4,
+                                           shape=19,
+                                           colour=fig_color)
+            
+            time_point_exp <- time_point_exp_original[time_point_exp_original$exp >= CutoffRelExp, ] #>=0.1
+            data_point <- length(time_point_exp$exp)
+            
+            if(!is.null(time_point_exp)){
+                if(data_point >= CutoffDataPoint){ #>=3
+                    model <- lm(log(time_point_exp$exp) ~ time_point_exp$hour - 1)
+                    fig_data <- data.frame(hour=time_point_exp$hour)
+                    predicted <- as.numeric(as.vector(as.matrix(predict(model, fig_data))))
+                    fig_data$exp <- exp(as.vector(as.matrix(predicted)))
+                    
+                    p.fitting <- p.fitting + layer(data=fig_data,
+                                                   mapping=(aes(x=hour, y=exp)),
+                                                   geom="line",
+                                                   size=1.2,
+                                                   colour=fig_color)
+                }
+            }
+            flg <- 1
+        }
+        p.fitting <- p.fitting + ggtitle(gene_name)
+        p.fitting <- p.fitting + xlab("Time")
+        p.fitting <- p.fitting + ylab("Relative RPKM (Time0 = 1)")
+        p.fitting <- p.fitting + xlim(0,12)
+        ybreaks <- seq(0,10,0.1)[2:101]
+        p.fitting <- p.fitting + scale_y_log10(breaks=ybreaks,labels=ybreaks)
+        plot(p.fitting)
+        
+        dev.off() #close_fig
+        plot.new()
+    }
+}
+
+BridgeRDrawFittingCurve <- function(filename="BridgeR_4_Normalized_expression_dataset.txt", group, hour, ComparisonFile, CutoffRelExp = 0.1, CutoffDataPoint = 3, InforColumn = 4, OutputDir = "BridgeR_fig", OutputFile = "BridgeR_4_HalfLife_Pvalue.txt"){
     ###Import_library###
     #library(data.table)
     #library(ggplot2)
@@ -28,7 +111,7 @@ BridgeRDrawFittingCurve <- function(filename, group, hour, ComparisonFile, Cutof
     }
     output_file <- OutputFile
     
-    setwd(output_dir_name)
+    #setwd(output_dir_name)
     
     ###print_header###
     cat("",file=output_file)
@@ -59,7 +142,7 @@ BridgeRDrawFittingCurve <- function(filename, group, hour, ComparisonFile, Cutof
         #Save_fig
         gene_name <- as.character(data[2])
         file_name <- sprintf("%1$s.png",gene_name)
-        paste(output_dir_name,"/",file_name,sep="")
+        file_name <- paste(output_dir_name,"/",file_name,sep="")
         png(filename=file_name,width = 640, height = 640)
         
         #Prepare_ggplot2

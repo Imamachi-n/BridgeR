@@ -8,7 +8,7 @@ Classic BRIC-seq data analysis pipeline
 RNA half-life for each gene is calculated using the RPKM of house-keeping genes.
 }
 \usage{
-BridgeRHKGenes(InputFiles, InforColumn = 4, InforHKGenes = 2, HKGenes = c("GAPDH", "PGK1", "PPIA", "ENO1", "ATP5B", "ALDOA"), group, hour, RPKMcutoff = 0.1, SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3)
+BridgeRHKGenes(InputFiles, InforColumn = 4, InforHKGenes = 2, HKGenes = c("GAPDH", "PGK1", "PPIA", "ENO1", "ATP5B", "ALDOA"), group, hour, RPKMcutoff = 0.1, SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3, UseOldModel=F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -41,6 +41,9 @@ Float
 }
   \item{CutoffDataPoint}{
 Integer
+}
+  \item{UseOldModel}{
+Bool(True or False)
 }
 }
 \details{
@@ -84,7 +87,7 @@ Naoto Imamachi
 ## The function is currently defined as
 function (InputFiles, InforColumn = 4, InforHKGenes = 2, HKGenes = c("GAPDH", 
     "PGK1", "PPIA", "ENO1", "ATP5B", "ALDOA"), group, hour, RPKMcutoff = 0.1, 
-    SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3) 
+    SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3, UseOldModel=F) 
 {
     library(data.table)
     library(ggplot2)

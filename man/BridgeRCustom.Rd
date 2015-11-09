@@ -8,7 +8,7 @@ Custom BRIC-seq data analysis pipeline
 RNA half-life for each gene is calculated using your custom normalization factor such as the RPKM of Luciferase.
 }
 \usage{
-BridgeRCustom(YourNormFactor, InputFiles, InforColumn = 4, group, hour, RPKMcutoff = 0.1, SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3)
+BridgeRCustom(YourNormFactor, InputFiles, InforColumn = 4, group, hour, RPKMcutoff = 0.1, SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3, UseOldModel=F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +38,9 @@ Float
 }
   \item{CutoffDataPoint}{
 Integer
+}
+  \item{UseOldModel}{
+Bool(True or False)
 }
 }
 \details{
@@ -82,7 +85,7 @@ Naoto Imamachi
 ## The function is currently defined as
 function (YourNormFactor, InputFiles, InforColumn = 4, group, 
     hour, RPKMcutoff = 0.1, SelectNormFactor = T, CutoffRelExp = 0.1, 
-    CutoffDataPoint = 3) 
+    CutoffDataPoint = 3, UseOldModel=F) 
 {
     library(data.table)
     library(ggplot2)

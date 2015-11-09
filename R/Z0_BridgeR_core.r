@@ -3,7 +3,7 @@
 #ver: 1.0.0
 #Date: 2015-11-05
 
-BridgeRCore <- function(InputFiles, InforColumn=4, group, hour, RPKMcutoff=0.1, RelRPKMFig=F, SelectNormFactor=T, CutoffRelExp=0.1, CutoffDataPoint=3){
+BridgeRCore <- function(InputFiles, InforColumn=4, group, hour, RPKMcutoff=0.1, RelRPKMFig=F, SelectNormFactor=T, CutoffRelExp=0.1, CutoffDataPoint=3, UseOldModel=F){
     #library(data.table)
     #library(ggplot2)
     BridgeRDataSetFromCuffnorm(CuffnormFiles=InputFiles, group=group, hour=hour, cutoff=RPKMcutoff, InforColumn=InforColumn, OutputFile="BridgeR_1_Relative_expression_dataset.txt")
@@ -11,10 +11,14 @@ BridgeRCore <- function(InputFiles, InforColumn=4, group, hour, RPKMcutoff=0.1, 
     BridgeRNormalizationFactors(InputFile="BridgeR_1_Relative_expression_dataset.txt",group=group, hour=hour, InforColumn=InforColumn, YMin=-2, YMax=2, MakeFig=RelRPKMFig, figname="BridgeR_3_Normalizaion_factor", nfname="BridgeR_3_Normalizaion_factor")
     BridgeRNormalization(filename="BridgeR_1_Relative_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, SelectNormFactor=SelectNormFactor, NormFactor="BridgeR_3_Normalizaion_factor", OutputFile="BridgeR_4_Normalized_expression_dataset.txt")
     BridgeRDatasetChecker(InputFile="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, OutputFile="BridgeR_4B_Normalized_RPKM_distribution")
-    BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, CutoffRelExp=CutoffRelExp, CutoffDataPoint=CutoffDataPoint, OutputFile="BridgeR_5_HalfLife_calculation.txt")
+    if(UseOldModel == F){
+        BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, CutoffRelExp=CutoffRelExp, CutoffDataPoint=CutoffDataPoint, OutputFile="BridgeR_5_HalfLife_calculation.txt")
+    }else if(UseOldModel == T){
+        BridgeRHalfLifeCalcModel3(filename = "BridgeR_4_Normalized_expression_dataset.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, OutputFile = "BridgeR_5B_HalfLife_calculation_3model.txt")
+    }
 }
 
-BridgeRHKGenes <- function(InputFiles, InforColumn=4, InforHKGenes=2, HKGenes=c("GAPDH","PGK1","PPIA","ENO1","ATP5B","ALDOA"), group, hour, RPKMcutoff=0.1, SelectNormFactor=T, CutoffRelExp=0.1, CutoffDataPoint=3){
+BridgeRHKGenes <- function(InputFiles, InforColumn=4, InforHKGenes=2, HKGenes=c("GAPDH","PGK1","PPIA","ENO1","ATP5B","ALDOA"), group, hour, RPKMcutoff=0.1, SelectNormFactor=T, CutoffRelExp=0.1, CutoffDataPoint=3, UseOldModel=F){
     #library(data.table)
     #library(ggplot2)
     BridgeRDataSetFromCuffnorm(CuffnormFiles=InputFiles, group=group, hour=hour, cutoff=RPKMcutoff, InforColumn=InforColumn, OutputFile="BridgeR_1_Relative_expression_dataset.txt")
@@ -22,17 +26,25 @@ BridgeRHKGenes <- function(InputFiles, InforColumn=4, InforHKGenes=2, HKGenes=c(
     BridgeRNormalizationFactorsHK(InputFile="BridgeR_1_Relative_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, InforHKGenes=InforHKGenes, HKGenes=HKGenes, OutputFile="BridgeR_3_Normalizaion_factor_HouseKeepingGenes.txt")
     BridgeRNormalizationForLuc2(filename="BridgeR_1_Relative_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, NormFactor="BridgeR_3_Normalizaion_factor_HouseKeepingGenes.txt", OutputFile="BridgeR_4_Normalized_expression_dataset.txt")
     BridgeRDatasetChecker(InputFile="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, OutputFile="BridgeR_4B_Normalized_RPKM_distribution")
-    BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, CutoffRelExp=CutoffRelExp, CutoffDataPoint=CutoffDataPoint, OutputFile="BridgeR_5_HalfLife_calculation.txt")
+    if(UseOldModel == F){
+        BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, CutoffRelExp=CutoffRelExp, CutoffDataPoint=CutoffDataPoint, OutputFile="BridgeR_5_HalfLife_calculation.txt")
+    }else if(UseOldModel == T){
+        BridgeRHalfLifeCalcModel3(filename = "BridgeR_4_Normalized_expression_dataset.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, OutputFile = "BridgeR_5B_HalfLife_calculation_3model.txt")
+    }
 }
 
-BridgeRCustom <- function(YourNormFactor, InputFiles, InforColumn=4, group, hour, RPKMcutoff=0.1, SelectNormFactor=T, CutoffRelExp=0.1, CutoffDataPoint=3){
+BridgeRCustom <- function(YourNormFactor, InputFiles, InforColumn=4, group, hour, RPKMcutoff=0.1, SelectNormFactor=T, CutoffRelExp=0.1, CutoffDataPoint=3, UseOldModel=F){
     #library(data.table)
     #library(ggplot2)
     BridgeRDataSetFromCuffnorm(CuffnormFiles=InputFiles, group=group, hour=hour, cutoff=RPKMcutoff, InforColumn=InforColumn, OutputFile="BridgeR_1_Relative_expression_dataset.txt")
     BridgeRDatasetChecker(InputFile="BridgeR_1_Relative_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, OutputFile="BridgeR_2_Relative_RPKM_distribution")
     BridgeRNormalizationForLuc2(filename="BridgeR_1_Relative_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, NormFactor=YourNormFactor, OutputFile="BridgeR_4_Normalized_expression_dataset.txt")
     BridgeRDatasetChecker(InputFile="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, OutputFile="BridgeR_4B_Normalized_RPKM_distribution")
-    BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, CutoffRelExp=CutoffRelExp, CutoffDataPoint=CutoffDataPoint, OutputFile="BridgeR_5_HalfLife_calculation.txt")
+    if(UseOldModel == F){
+        BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, CutoffRelExp=CutoffRelExp, CutoffDataPoint=CutoffDataPoint, OutputFile="BridgeR_5_HalfLife_calculation.txt")
+    }else if(UseOldModel == T){
+        BridgeRHalfLifeCalcModel3(filename = "BridgeR_4_Normalized_expression_dataset.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, OutputFile = "BridgeR_5B_HalfLife_calculation_3model.txt")
+    }
 }
 
 BridgeRCompare <- function(InputFile="BridgeR_5_HalfLife_calculation.txt", InforColumn=4, group, hour, ComparisonFile){

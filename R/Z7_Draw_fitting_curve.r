@@ -91,6 +91,7 @@ BridgeRSimpleDraw <- function(filename="BridgeR_4_Normalized_expression_dataset.
     }
 }
 
+#####################################################
 BridgeRDrawFittingCurve <- function(filename="BridgeR_4_Normalized_expression_dataset.txt", group, hour, ComparisonFile, CutoffRelExp = 0.1, CutoffDataPoint = 3, InforColumn = 4, OutputDir = "BridgeR_fig", OutputFile = "BridgeR_4_HalfLife_Pvalue.txt"){
     ###Import_library###
     #library(data.table)
@@ -312,5 +313,143 @@ BridgeRDrawFittingCurve <- function(filename="BridgeR_4_Normalized_expression_da
         cat(p_value,"\n", sep="\t", file=output_file, append=T)
         dev.off() #close_fig
         plot.new()
+    }
+}
+
+#####################################################
+BridgeR3ModelDraw <- function(filename="BridgeR_5B_HalfLife_calculation_3model.txt", group, hour, ComparisonFile, InforColumn = 4, OutputDir = "BridgeR_3model_fig"){
+    ###Make_stored_directory###
+    ComparisonFile_name = paste(ComparisonFile,collapse="_")
+    output_dir_name <- paste(OutputDir,ComparisonFile_name,sep="_")
+    dir.create(output_dir_name)
+    
+    ###Prepare_file_infor###
+    time_points <- length(hour)
+    group_number <- length(group)
+    input_file <- fread(filename, header=T)
+    comp_file_number <- NULL
+    for(a in 1:length(ComparisonFile)){
+        comp_file_number <- append(comp_file_number, which(group == ComparisonFile[a]))
+    }
+    
+    #setwd(output_dir_name)
+    
+    ###Draw_fitting_curve###
+    gene_number <- length(input_file[[1]])
+    for(x in 1:gene_number){
+        data <- as.vector(as.matrix(input_file[x,]))
+        
+        model_index1 <- (InforColumn)*comp_file_number[1] + (comp_file_number[1] - 1)*(time_points + 23) + 21
+        model_index2 <- (InforColumn)*comp_file_number[2] + (comp_file_number[2] - 1)*(time_points + 23) + 21
+        model_1 <- data[model_index1]
+        model_2 <- data[model_index2]
+        
+        if(is.na(model_1)){
+        }else if(is.na(model_2)){
+        }else if(model_1 == "no_good_model" || model_2 == "no_good_model"){
+        }else{
+            #Save_fig
+            gene_name <- as.character(data[2])
+            file_name <- sprintf("%1$s.png",gene_name)
+            file_name <- paste(output_dir_name,"/",file_name,sep="")
+            png(filename=file_name,width = 640, height = 640)
+            
+            #Prepare_ggplot2
+            p.fitting <- ggplot()
+            
+            flg <- 0
+            fig_color <- NULL
+            curve_color_number <- c("curve_1","curve_2")
+            
+            for(a in comp_file_number){
+                if(flg == 0){
+                    fig_color <- "black"
+                }else{
+                    fig_color <- "red"
+                }
+                
+                infor_st <- 1 + (a - 1)*(time_points + InforColumn + 23)
+                infor_ed <- (InforColumn)*a + (a - 1)*(time_points + 23)
+                exp_st <- infor_ed + 1
+                exp_ed <- infor_ed + time_points
+                
+                #gene_infor <- data[infor_st:infor_ed]
+                exp <- as.numeric(data[exp_st:exp_ed])
+                time_point_exp_original <- data.frame(hour,exp)
+                
+                p.fitting <- p.fitting + layer(data=time_point_exp_original, 
+                                               mapping=aes(x=hour, y=exp), 
+                                               geom="point",
+                                               size=4,
+                                               shape=19,
+                                               colour=fig_color)
+                
+                #Parameter
+                a_1_index <- exp_ed + 4
+                a_2_index <- exp_ed + 10
+                b_2_index <- exp_ed + 11
+                a_3_index <- exp_ed + 16
+                b_3_index <- exp_ed + 17
+                c_3_index <- exp_ed + 18
+                model_index <- exp_ed + 21
+                model <- data[model_index]
+
+                #model_curve
+                if(flg == 0){
+                    model_curve_1 <- NULL
+                    a_1_1 <- as.numeric(data[a_1_index])
+                    a_2_1 <- as.numeric(data[a_2_index])
+                    b_2_1 <- as.numeric(data[b_2_index])
+                    a_3_1 <- as.numeric(data[a_3_index])
+                    b_3_1 <- as.numeric(data[b_3_index])
+                    c_3_1 <- as.numeric(data[c_3_index])                    
+                    if(model == "model1"){
+                        model_curve_1 <- function(t){exp(-a_1_1 * t)}
+                    }else if(model == "model2"){
+                        model_curve_1 <- function(t){(1.0 - b_2_1) * exp(-a_2_1 * t) + b_2_1}
+                    }else if(model == "model3"){
+                        model_curve_1 <- function(t){(c_3_1) * exp(-a_3_1 * t) + (1.0 - c_3_1) * exp(-b_3_1 * t)}
+                    }
+                    p.fitting <- p.fitting + layer(geom="path",
+                                                   stat="function",
+                                                   fun=model_curve_1,
+                                                   mapping=aes(color="model_curve_1"),
+                                                   size=1.2)
+                }else if(flg == 1){
+                    model_curve_2 <- NULL
+                    a_1_2 <- as.numeric(data[a_1_index])
+                    a_2_2 <- as.numeric(data[a_2_index])
+                    b_2_2 <- as.numeric(data[b_2_index])
+                    a_3_2 <- as.numeric(data[a_3_index])
+                    b_3_2 <- as.numeric(data[b_3_index])
+                    c_3_2 <- as.numeric(data[c_3_index])
+                    if(model == "model1"){
+                        model_curve_2 <- function(t){exp(-a_1_2 * t)}
+                    }else if(model == "model2"){
+                        model_curve_2 <- function(t){(1.0 - b_2_2) * exp(-a_2_2 * t) + b_2_2}
+                    }else if(model == "model3"){
+                        model_curve_2 <- function(t){(c_3_2) * exp(-a_3_2 * t) + (1.0 - c_3_2) * exp(-b_3_2 * t)}
+                    }
+                    p.fitting <- p.fitting + layer(geom="path",
+                                                   stat="function",
+                                                   fun=model_curve_2,
+                                                   mapping=aes(color="model_curve_2"),
+                                                   size=1.2)
+                }
+                flg <- 1
+            }
+            p.fitting <- p.fitting + scale_colour_manual(name="Sample",
+                                                         values=c("model_curve_1"="black","model_curve_2"="red"),
+                                                         labels=ComparisonFile)
+            p.fitting <- p.fitting + ggtitle(gene_name)
+            p.fitting <- p.fitting + xlab("Time")
+            p.fitting <- p.fitting + ylab("Relative RPKM (Time0 = 1)")
+            p.fitting <- p.fitting + scale_x_continuous(limits = c(0,12))
+            p.fitting <- p.fitting + scale_y_log10()
+            plot(p.fitting)
+            
+            dev.off() #close_fig
+            plot.new()
+        }
     }
 }

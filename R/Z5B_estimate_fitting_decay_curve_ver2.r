@@ -4,7 +4,7 @@
 #Date: 2015-10-08
 
 ###Estimate_normalization_factor_function###
-BridgeRHalfLifeCalcR2Select <- function(filename = "BridgeR_4_Normalized_expression_data.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, ExceptTimePoint=c(1), OutputFile = "BridgeR_5C_HalfLife_calculation_R2Selection.txt"){
+BridgeRHalfLifeCalcR2Select <- function(filename = "BridgeR_4_Normalized_expression_dataset.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, ExceptTimePoint=c(1), OutputFile = "BridgeR_5C_HalfLife_calculation_R2Selection.txt"){
     ###Prepare_file_infor###
     time_points <- length(hour)
     group_number <- length(group)
@@ -26,6 +26,8 @@ BridgeRHalfLifeCalcR2Select <- function(filename = "BridgeR_4_Normalized_express
         infor_ed <- (InforColumn)*a + (a - 1)*time_points
         infor <- colnames(input_file)[infor_st:infor_ed]
         cat(infor,hour_label, sep="\t", file=output_file, append=T)
+        cat("\t", sep="", file=output_file, append=T)
+        cat("Model","Decay_rate_coef","coef_error","coef_p-value","R2","Adjusted_R2","Residual_standard_error","half_life", sep="\t", file=output_file, append=T)
         cat("\t", sep="", file=output_file, append=T)
         cat("Model","Decay_rate_coef","coef_error","coef_p-value","R2","Adjusted_R2","Residual_standard_error","half_life", sep="\t", file=output_file, append=T)
         cat("\t", sep="", file=output_file, append=T)
@@ -105,7 +107,15 @@ BridgeRHalfLifeCalcR2Select <- function(filename = "BridgeR_4_Normalized_express
             }
             time_point_exp_exception <- time_point_exp_exception[time_point_exp_exception$exp > 0, ]
             half_calc(time_point_exp_exception)
-            
+            cat("\t", sep="", file=output_file, append=T)
+
+            ###Except_time_point(Mix::)
+            time_point_exp_mix <- time_point_exp_raw #Copy
+            for(tp in 1:length(ExceptTimePoint)){
+                time_point_exp_mix <- time_point_exp_mix[time_point_exp_mix$hour!=ExceptTimePoint[tp],]
+            }
+            time_point_exp_mix <- time_point_exp_mix[time_point_exp_mix$exp >= CutoffRelExp, ]
+            half_calc(time_point_exp_mix)
         }
         cat("\n", file=output_file, append=T)
     }

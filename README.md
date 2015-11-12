@@ -2,7 +2,7 @@
 An R library for comprehensive BRIC-seq data analysis tool.  
 BridgeR library was made under R version 3.2.2.
 ***
-##Dependencies(Required R libraries)
+##Dependencies (Required R libraries)
 data.table  
 ggplot2  
 
@@ -31,5 +31,4 @@ group <- c("Control","Knockdown")
 
 BridgeRCore(InputFiles=files, group=group, hour=hour, RelRPKMFig=T)
 BridgeRCompare(InputFile="BridgeR_5_HalfLife_calculation.txt", group=group, hour=hour, ComparisonFile=group)
-
 ```

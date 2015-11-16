@@ -1,14 +1,19 @@
-\name{BridgeRHalfLifeCalcR2Select}
-\alias{BridgeRHalfLifeCalcR2Select}
+\name{BridgeReport}
+\alias{BridgeReport}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Calculate RNA half-life from BRIC-seq data
+Draw fitting decay curve for BRIC-seq data
 }
 \description{
-Calculate RNA half-life from BRIC-seq data
+Draw fitting decay curve for BRIC-seq data
 }
 \usage{
-BridgeRHalfLifeCalcR2Select(filename = "BridgeR_4_Normalized_expression_dataset.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, ExceptTimePoint=c(1), OutputFile = "BridgeR_5C_HalfLife_calculation_R2Selection.txt")
+BridgeReport(filename="BridgeR_4_Normalized_expression_dataset.txt",
+             group,
+             hour,
+             ComparisonFile,
+             SearchRow="symbol",
+             InforColumn=4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,24 +26,18 @@ Vector(string)
   \item{hour}{
 Vector(number)
 }
+  \item{ComparisonFile}{
+Vector(string)
+}
+  \item{SearchRow}{
+String(header)
+}
   \item{InforColumn}{
 Integer
 }
-  \item{CutoffRelExp}{
-Number(Integer or Float)
-}
-  \item{CutoffDataPoint}{
-Integer
-}
-  \item{ExceptTimePoint}{
-Vector(time_point)
-}
-  \item{OutputFile}{
-File path/name
-}
 }
 \details{
-Calculate RNA half-life from BRIC-seq data
+Draw fitting decay curve for BRIC-seq data
 }
 \value{
 %%  ~Describe the value returned
@@ -46,7 +45,7 @@ Calculate RNA half-life from BRIC-seq data
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-text file
+text and fig files
 }
 \references{
 https://github.com/Naoto-Imamachi/BRIC-seq_data_analysis/tree/master/BridgeR
@@ -55,7 +54,7 @@ https://github.com/Naoto-Imamachi/BRIC-seq_data_analysis/tree/master/BridgeR
 Naoto Imamachi
 }
 \note{
-2015-11-12
+2015-11-16
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -69,7 +68,12 @@ Naoto Imamachi
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (filename = "BridgeR_4_Normalized_expression_data.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, ExceptTimePoint=c(1), OutputFile = "BridgeR_5C_HalfLife_calculation_R2Selection.txt") 
+function (filename="BridgeR_4_Normalized_expression_dataset.txt",
+          group,
+          hour,
+          ComparisonFile,
+          SearchRow="symbol",
+          InforColumn=4)
 {
 }
 }

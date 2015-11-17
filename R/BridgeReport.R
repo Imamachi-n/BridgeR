@@ -39,9 +39,17 @@ BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
                             min = 0.001, max = 10, value = c(0.1,1.5)),
                 selectInput("select", label = "Select decay curve calculation method", 
                             choices = list("Raw" = 1,
-                                           "cutoff>=0.1" = 2,
-                                           "Except 1hr" = 3,
-                                           "Mix" = 4), selected = 1)
+                                           "Except 1hr" = 2,
+                                           "Except 1-2hr" = 3,
+                                           "Except 2hr" = 4,
+                                           "Except 4hr" = 5,
+                                           "Except 8hr" = 6,
+                                           "Except 12hr" = 7,
+                                           "Except 8-12hr" = 8,
+                                           "Except 1,12hr" = 9,
+                                           "Cutoff>=0.1" = 10,
+                                           "Cutoff>=0.05" = 11,
+                                           "Cutoff>=0.01" = 12), selected = 1)
             ),
             
             mainPanel(
@@ -99,12 +107,30 @@ BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
                 if(input$select == 1){
                     
                 }else if(input$select == 2){
-                    time_point_exp <- time_point_exp[time_point_exp$exp >= 0.1, ]
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=1,]
                 }else if(input$select == 3){
                     time_point_exp <- time_point_exp[time_point_exp$hour!=1,]
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=2,]
                 }else if(input$select == 4){
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=2,]
+                }else if(input$select == 5){
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=4,]
+                }else if(input$select == 6){
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=8,]
+                }else if(input$select == 7){
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=12,]
+                }else if(input$select == 8){
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=12,]
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=8,]
+                }else if(input$select == 9){
                     time_point_exp <- time_point_exp[time_point_exp$hour!=1,]
+                    time_point_exp <- time_point_exp[time_point_exp$hour!=12,]
+                }else if(input$select == 10){
                     time_point_exp <- time_point_exp[time_point_exp$exp >= 0.1, ]
+                }else if(input$select == 11){
+                    time_point_exp <- time_point_exp[time_point_exp$exp >= 0.05, ]
+                }else if(input$select == 12){
+                    time_point_exp <- time_point_exp[time_point_exp$exp >= 0.01, ]
                 }
                 
                 p <- p + layer(data=time_point_exp, 

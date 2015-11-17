@@ -55,12 +55,17 @@ BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
                                       brush = brushOpts(id = "plot1_brush")
                            )
                     )
-                )
+                ),
+                
+                tableOutput("mytable1")
+                
             )
         )
     )
     
     server <- function(input, output) {
+        r_squared_list <- NULL
+        half_life_list <- NULL
         
         output$plot1 <- renderPlot({
             data <- as.vector(as.matrix(input_file[input$text]))
@@ -115,11 +120,16 @@ BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
                         if(as.numeric(as.vector(as.matrix(time_point_exp$exp[1]))) > 0){
                             model <- lm(log(time_point_exp$exp) ~ time_point_exp$hour - 1)
                             model_summary <- summary(model)
+                            coef <- -model_summary$coefficients[1]
+                            half_life <- log(2)/coef
+                            if(coef < 0 || half_life >= 24){
+                                half_life <- 24
+                            }
                             r_squared <- model_summary$r.squared
-                            
-                            #output$test1 <- renderText({ 
-                            #    paste("R2: ",as.character(r_squared),sep="")
-                            #})
+                            half_life <- round(half_life,digits=3)
+                            r_squared <- round(r_squared,digits=3)
+                            half_life_list <- append(half_life_list,half_life)
+                            r_squared_list <- append(r_squared_list,r_squared)
                             
                             fig_data <- data.frame(hour=time_point_exp$hour)
                             predicted <- as.numeric(as.vector(as.matrix(predict(model, fig_data))))
@@ -129,8 +139,17 @@ BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
                                            geom="line",
                                            size=1.2,
                                            colour=fig_color)
+                        }else{
+                            half_life_list <- append(half_life_list,"NA")
+                            r_squared_list <- append(r_squared_list,"NA")
                         }
+                    }else{
+                        half_life_list <- append(half_life_list,"NA")
+                        r_squared_list <- append(r_squared_list,"NA")
                     }
+                }else{
+                    half_life_list <- append(half_life_list,"NA")
+                    r_squared_list <- append(r_squared_list,"NA")
                 }
                 flg <- 1
             }
@@ -142,6 +161,17 @@ BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
             ybreaks2 <- seq(0,0.1,0.01)[2:10]
             ybreaks <- c(ybreaks1,ybreaks2)
             p <- p + scale_y_log10(breaks=ybreaks, labels=ybreaks, limits=c(input$range_y[1],input$range_y[2]))
+            
+            if(is.null(r_squared_list) || is.null(half_life_list)){
+                table_data <- data.frame(Sample=ComparisonFile, R2=c("NA","NA"), HalfLife=c("NA","NA"))
+            }else{
+                table_data <- data.frame(Sample=ComparisonFile, R2=r_squared_list, HalfLife=half_life_list)
+            }
+            
+            output$mytable1 = renderTable({
+                table_data
+            })
+            
             p
         })
     }

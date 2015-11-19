@@ -62,11 +62,12 @@ BridgeRDataSetFromCuffnorm <- function(CuffnormFiles, group, hour, cutoff = 0.1,
             exp <- data[exp_st:exp_ed]
             exp <- as.numeric(exp)
             start_time <- exp[1]
-            ###if: Time0 <= cutoff_RPKM###
+            ###if: RPKM_Cutoff###
             if(start_time <= cutoff){
                 cat(rep(0,time_points), sep="\t", file=output_file, append=T)
                 next
             }
+            exp <- replace(exp,which(exp<0.1),0)
             rel_exp <- NULL
             for (y in 1:time_points){
                 rel_exp <- append(rel_exp, exp[y]/start_time)

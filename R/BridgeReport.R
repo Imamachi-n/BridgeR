@@ -1,18 +1,27 @@
 #Title: BridgeReport: Data visualization for RNA decay curve with shiny library
 #Auther: Naoto Imamachi
 #ver: 1.0.0
-#Date: 2015-11-16
+#Date: 2015-11-18
 
-BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
-             group,
-             hour,
-             ComparisonFile,
-             SearchRow="symbol",
-             InforColumn=4)
+BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+                         filename2="siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+                         filename3="BridgeR_4_Normalized_expression_dataset.txt",
+                         group,
+                         hour,
+                         ComparisonFile,
+                         SearchRow="symbol",
+                         InforColumn=4)
 {
     time_points <- length(hour) 
-    group_number <- length(group) 
-    input_file <- fread(filename, header=T)
+    group_number <- length(group)
+    rpkm_file1 <- fread(filename1, header=T)
+    rpkm_file2 <- fread(filename2, header=T)
+    input_file <- fread(filename3, header=T)
+    
+    table_header <- NULL
+    for(x in 1:time_points){
+        table_header <- append(table_header,paste(hour[x],"hr",sep=""))
+    }
     
     ###Prepare_file_infor###
     comp_file_number <- NULL
@@ -20,6 +29,11 @@ BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
         comp_file_number <- append(comp_file_number, which(group == ComparisonFile[a]))
     }
     setkeyv(input_file,SearchRow)
+    setkeyv(rpkm_file1,SearchRow)
+    setkeyv(rpkm_file2,SearchRow)
+    
+    rpkm_exp_st <- InforColumn + 1
+    rpkm_exp_ed <- InforColumn + time_points
     
     ui <- fluidPage(
         titlePanel("BridgeReport ver 0.1.0"),
@@ -189,9 +203,16 @@ BridgeReport <- function(filename="BridgeR_4_Normalized_expression_dataset.txt",
             p <- p + scale_y_log10(breaks=ybreaks, labels=ybreaks, limits=c(input$range_y[1],input$range_y[2]))
             
             if(is.null(r_squared_list) || is.null(half_life_list)){
-                table_data <- data.frame(Sample=ComparisonFile, R2=c("NA","NA"), HalfLife=c("NA","NA"))
+                
+                table_data <- data.frame(R2=c("NA","NA"), HalfLife=c("NA","NA"))
             }else{
-                table_data <- data.frame(Sample=ComparisonFile, R2=r_squared_list, HalfLife=half_life_list)
+                
+                rpkm_data1 <- round(as.numeric(as.vector(as.matrix(rpkm_file1[input$text]))[rpkm_exp_st:rpkm_exp_ed]),digits=3)
+                rpkm_data2 <- round(as.numeric(as.vector(as.matrix(rpkm_file2[input$text]))[rpkm_exp_st:rpkm_exp_ed]),digits=3)
+                table_data <- data.frame(R2=r_squared_list, HalfLife=half_life_list)
+                table_data <- cbind(table_data,rbind(rpkm_data1,rpkm_data2))
+                colnames(table_data) <- c("R2","Half-life",table_header)
+                rownames(table_data) <- ComparisonFile
             }
             
             output$mytable1 = renderTable({

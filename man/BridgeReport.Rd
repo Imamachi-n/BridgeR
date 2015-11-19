@@ -8,7 +8,9 @@ Draw fitting decay curve for BRIC-seq data
 Draw fitting decay curve for BRIC-seq data
 }
 \usage{
-BridgeReport(filename="BridgeR_4_Normalized_expression_dataset.txt",
+BridgeReport(filename1="siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+             filename2="siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+             filename3="BridgeR_4_Normalized_expression_dataset.txt",
              group,
              hour,
              ComparisonFile,
@@ -17,7 +19,13 @@ BridgeReport(filename="BridgeR_4_Normalized_expression_dataset.txt",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{filename}{
+  \item{filename1}{
+File path/name
+}
+  \item{filename2}{
+File path/name
+}
+  \item{filename3}{
 File path/name
 }
   \item{group}{
@@ -68,12 +76,14 @@ Naoto Imamachi
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (filename="BridgeR_4_Normalized_expression_dataset.txt",
-          group,
-          hour,
-          ComparisonFile,
-          SearchRow="symbol",
-          InforColumn=4)
+function (filename1="siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+             filename2="siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+             filename3="BridgeR_4_Normalized_expression_dataset.txt",
+             group,
+             hour,
+             ComparisonFile,
+             SearchRow="symbol",
+             InforColumn=4)
 {
 }
 }

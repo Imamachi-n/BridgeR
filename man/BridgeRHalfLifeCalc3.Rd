@@ -12,9 +12,9 @@ BridgeRHalfLifeCalc3(filename = "BridgeR_4_Normalized_expression_dataset_2015111
                                  group, 
                                  hour, 
                                  InforColumn = 4, 
-                                 ThresholdHalfLife = 12, 
+                                 ThresholdHalfLife = c(8,12), 
                                  CutoffDataPoint = 4, 
-                                 OutputFile = "BridgeR_5D_HalfLife_calculation_ver3_20151118.txt")
+                                 OutputFile = "BridgeR_5D_HalfLife_calculation_ver4_20151119.txt")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -76,9 +76,9 @@ function (filename = "BridgeR_4_Normalized_expression_dataset_20151118.txt",
                                  group, 
                                  hour, 
                                  InforColumn = 4, 
-                                 ThresholdHalfLife = 12, 
+                                 ThresholdHalfLife = c(8,12), 
                                  CutoffDataPoint = 4, 
-                                 OutputFile = "BridgeR_5D_HalfLife_calculation_ver3_20151118.txt")
+                                 OutputFile = "BridgeR_5D_HalfLife_calculation_ver4_20151119.txt")
 {
 }
 }

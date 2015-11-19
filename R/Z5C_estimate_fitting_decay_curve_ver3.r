@@ -8,9 +8,9 @@ BridgeRHalfLifeCalc3 <- function(filename = "BridgeR_4_Normalized_expression_dat
                                  group, 
                                  hour, 
                                  InforColumn = 4, 
-                                 ThresholdHalfLife = 12, 
+                                 ThresholdHalfLife = c(8,12),
                                  CutoffDataPoint = 4, 
-                                 OutputFile = "BridgeR_5D_HalfLife_calculation_ver3_20151118.txt"){
+                                 OutputFile = "BridgeR_5D_HalfLife_calculation_ver4_20151119.txt"){
     ###Prepare_file_infor###
     time_points <- length(hour)
     group_number <- length(group)
@@ -44,7 +44,7 @@ BridgeRHalfLifeCalc3 <- function(filename = "BridgeR_4_Normalized_expression_dat
     cat("\n", sep="", file=output_file, append=T)
     
     ###calc_RNA_half_lives###
-    half_calc <- function(time_exp_table,label){
+    half_calc <- function(time_exp_table,label,SaveFile=T){
         data_point <- length(time_exp_table$exp)
         if(!is.null(time_exp_table)){
             if(data_point >= CutoffDataPoint){
@@ -64,18 +64,30 @@ BridgeRHalfLifeCalc3 <- function(filename = "BridgeR_4_Normalized_expression_dat
                     #if(coef < 0){
                     #    half_life <- Inf
                     #}
-                    cat(label,coef,coef_error,coef_p,r_squared,adj_r_squared,residual_standard_err,half_life, sep="\t", file=output_file, append=T)
+                    if(SaveFile == T){
+                        cat(label,coef,coef_error,coef_p,r_squared,adj_r_squared,residual_standard_err,half_life, sep="\t", file=output_file, append=T)
+                    }else if(SaveFile == F){
+                    }
                     return(c(half_life,r_squared))
                 }else{
-                    cat("low_expresion","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
+                    if(SaveFile == T){
+                        cat("low_expresion","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
+                    }else if(SaveFile == F){
+                    }
                     return(c("NA","NA"))
                 }
             }else{
-                cat("few_data","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
+                if(SaveFile == T){
+                    cat("few_data","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
+                }else if(SaveFile == F){
+                }
                 return(c("NA","NA"))
             }
         }else{
-            cat("low_expresion","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
+            if(SaveFile == T){
+                cat("low_expresion","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
+            }else if(SaveFile == F){
+            }
             return(c("NA","NA"))
         }
     }
@@ -115,7 +127,7 @@ BridgeRHalfLifeCalc3 <- function(filename = "BridgeR_4_Normalized_expression_dat
                 cat("Notest","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
                 cat("\t", sep="", file=output_file, append=T)
                 cat("Notest","NA","NA", sep="\t", file=output_file, append=T)
-            }else if(test[1] < ThresholdHalfLife){ #Default: <12hr => Delete 8,12hr
+            }else if(test[1] < ThresholdHalfLife[1]){ #Default: <12hr => Delete 8,12hr
                 ###Delete 12hr
                 time_point_exp_del_1 <- time_point_exp_raw[time_point_exp_raw$hour != 12,]
                 time_point_exp_del_1 <- time_point_exp_del_1[time_point_exp_del_1$exp > 0,]
@@ -131,7 +143,32 @@ BridgeRHalfLifeCalc3 <- function(filename = "BridgeR_4_Normalized_expression_dat
                 R2_list <- append(R2_list,c(test[2],test1[2],test2[2]))
                 half_list <- append(half_list,c(test[1],test1[1],test2[1]))
                 label_list <- c("Raw","Delete_12hr","Delete_8hr_12hr")
-            }else if(test[1] >= ThresholdHalfLife){ #Default: >=12hr => Delete 1,2hr
+            }else if(test[1] >= ThresholdHalfLife[1] && test[1] < ThresholdHalfLife[2]){
+                ###Delete 12hr
+                time_point_exp_del_1 <- time_point_exp_raw[time_point_exp_raw$hour != 12,]
+                time_point_exp_del_1 <- time_point_exp_del_1[time_point_exp_del_1$exp > 0,]
+                test1 <- half_calc(time_point_exp_del_1,"Delete_12hr")
+                cat("\t", sep="", file=output_file, append=T)
+                ###Delete 8,12hr
+                time_point_exp_del_2 <- time_point_exp_raw[time_point_exp_raw$hour != 12,]
+                time_point_exp_del_2 <- time_point_exp_del_2[time_point_exp_del_2$hour != 8,]
+                time_point_exp_del_2 <- time_point_exp_del_2[time_point_exp_del_2$exp > 0,]
+                test2 <- half_calc(time_point_exp_del_2,"Delete_8hr_12hr")
+                cat("\t", sep="", file=output_file, append=T)
+                ###Delete 1hr
+                time_point_exp_del_3 <- time_point_exp_raw[time_point_exp_raw$hour != 1,]
+                time_point_exp_del_3 <- time_point_exp_del_3[time_point_exp_del_3$exp > 0,]
+                test3 <- half_calc(time_point_exp_del_3,"Delete_1hr",SaveFile=F)
+                ###Delete 1,2hr
+                time_point_exp_del_4 <- time_point_exp_raw[time_point_exp_raw$hour != 1,]
+                time_point_exp_del_4 <- time_point_exp_del_4[time_point_exp_del_4$hour != 2,]
+                time_point_exp_del_4 <- time_point_exp_del_4[time_point_exp_del_4$exp > 0,]
+                test4 <- half_calc(time_point_exp_del_4,"Delete_1hr_2hr",SaveFile=F)
+                ###R2_list
+                R2_list <- append(R2_list,c(test[2],test1[2],test2[2],test3[2],test4[2]))
+                half_list <- append(half_list,c(test[1],test1[1],test2[1],test3[1],test4[1]))
+                label_list <- c("Raw","Delete_12hr","Delete_8hr_12hr","Delete_1hr","Delete_1hr_2hr")
+            }else if(test[1] >= ThresholdHalfLife[2]){ #Default: >=12hr => Delete 1,2hr
                 ###Delete 1hr
                 time_point_exp_del_1 <- time_point_exp_raw[time_point_exp_raw$hour != 1,]
                 time_point_exp_del_1 <- time_point_exp_del_1[time_point_exp_del_1$exp > 0,]

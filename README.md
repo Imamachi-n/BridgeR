@@ -21,7 +21,7 @@ C:\Program Files\R\R-3.2.2\bin
 R CMD INSTALL BridgeR
 ```
 ##Example
-(1) Calculate RNA half-life from BRIC-seq dataset and compare RNA half-life bwtween two conditions.
+(1) Calculate RNA half-life from your BRIC-seq dataset and compare RNA half-life bwtween two conditions.
 ```
 library(BridgeR)
 
@@ -34,13 +34,13 @@ BridgeRCore(InputFiles=files,
             group=group,
             hour=hour,
             RelRPKMFig=T)
-            
+
 BridgeRCompare(InputFile="BridgeR_5_HalfLife_calculation.txt",
                group=group,
                hour=hour,
                ComparisonFile=group)
 ```
-(2) 
+(2) Draw RNA decay curve predicted from your BRIC-seq dataset.
 ```
 library(BridgeR)
 

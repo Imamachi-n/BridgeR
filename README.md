@@ -5,6 +5,8 @@ BridgeR library was made under R version 3.2.2.
 ##Dependencies (Required R libraries)
 data.table  
 ggplot2  
+shiny  
+BSDA  
 
 ##Install
 ###Linux

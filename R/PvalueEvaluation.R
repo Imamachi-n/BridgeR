@@ -3,12 +3,12 @@
 #ver: 1.0.0
 #Date: 2015-11-20
 
-BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5D_HalfLife_calculation_ver4_20151119.txt",
+BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
                                     group,
                                     hour,
                                     ComparisonFile,
                                     InforColumn=4,
-                                    CutoffDataPoint=4,
+                                    CutoffDataPointNumber = 4,
                                     OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt"){
     ###Prepare_file_infor###
     TimeDataSize <- length(hour)
@@ -31,8 +31,8 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5D_HalfLife_calculation_v
         for(TimePoints in hour){
             hour_label <- append(hour_label, paste("T",TimePoints,"_",SampleNum, sep=""))
         }
-        infor_st <- 1 + (SampleNum - 1)*(TimeDataSize + InforColumn + 27)
-        infor_ed <- (InforColumn)*SampleNum + (SampleNum - 1)*(TimeDataSize + 27)
+        infor_st <- 1 + (SampleNum - 1)*(TimeDataSize + InforColumn + 3) #3 => Model, R2, half_life
+        infor_ed <- (InforColumn)*SampleNum + (SampleNum - 1)*(TimeDataSize + 3) #3 => Model, R2, half_life
         infor_label <- colnames(input_file)[infor_st:infor_ed]
         cat(infor_label,hour_label, sep="\t", file=output_file, append=T)
         cat("\t", sep="", file=output_file, append=T)
@@ -49,7 +49,7 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5D_HalfLife_calculation_v
     pvalue_calc <- function(DataFrame){
         data_point <- length(DataFrame$exp)
         if(!is.null(DataFrame)){
-            if(data_point >= CutoffDataPoint){
+            if(data_point >= CutoffDataPointNumber){
                 if(as.numeric(as.vector(as.matrix(DataFrame$exp[1]))) > 0){
                     fitted_model <- lm(log(DataFrame$exp) ~ DataFrame$hour - 1)
                     model_summary <- summary(fitted_model)
@@ -130,8 +130,8 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5D_HalfLife_calculation_v
             if(flg == 1){
                 cat("\t", sep="", file=output_file, append=T)
             }
-            infor_st <- 1 + (SampleNum - 1)*(TimeDataSize + InforColumn + 27)
-            infor_ed <- (InforColumn)*SampleNum + (SampleNum - 1)*(TimeDataSize + 27)
+            infor_st <- 1 + (SampleNum - 1)*(TimeDataSize + InforColumn + 3)
+            infor_ed <- (InforColumn)*SampleNum + (SampleNum - 1)*(TimeDataSize + 3)
             exp_st <- infor_ed + 1
             exp_ed <- infor_ed + TimeDataSize
             
@@ -145,7 +145,7 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5D_HalfLife_calculation_v
             
             TimePoint_Exp_data_raw <- data.frame(hour,exp)
             
-            model_index <- infor_ed + 31
+            model_index <- exp_ed + 1 #1: Model, #2:R2, #3:half_life
             model <- data[model_index]
             
             ###Test###
@@ -156,22 +156,14 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5D_HalfLife_calculation_v
             }else if(model == "Raw"){
                 TimePoint_Exp_data_base <- TimePoint_Exp_data_raw[TimePoint_Exp_data_raw$exp > 0,]
                 ttest_infor <- pvalue_calc(TimePoint_Exp_data_base)
-            }else if(model == "Delete_1hr"){
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_raw[TimePoint_Exp_data_raw$hour != 1,]
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_del[TimePoint_Exp_data_del$exp > 0,]
-                ttest_infor <- pvalue_calc(TimePoint_Exp_data_del)
-            }else if(model == "Delete_1hr_2hr"){
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_raw[TimePoint_Exp_data_raw$hour != 1,]
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_del[TimePoint_Exp_data_del$hour != 2,]
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_del[TimePoint_Exp_data_del$exp > 0,]
-                ttest_infor <- pvalue_calc(TimePoint_Exp_data_del)
-            }else if(model == "Delete_12hr"){
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_raw[TimePoint_Exp_data_raw$hour != 12,]
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_del[TimePoint_Exp_data_del$exp > 0,]
-                ttest_infor <- pvalue_calc(TimePoint_Exp_data_del)
-            }else if(model == "Delete_8hr_12hr"){
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_raw[TimePoint_Exp_data_raw$hour != 8,]
-                TimePoint_Exp_data_del <- TimePoint_Exp_data_del[TimePoint_Exp_data_del$hour != 12,]
+            }else{
+                check <- gsub("Delete_","",model)
+                check <- gsub("hr","",check)
+                check <- as.numeric(strsplit(check,"_")[[1]])
+                TimePoint_Exp_data_del <- TimePoint_Exp_data_raw
+                for(times_list in check){
+                    TimePoint_Exp_data_del <- TimePoint_Exp_data_del[TimePoint_Exp_data_del$hour != times_list,]
+                }
                 TimePoint_Exp_data_del <- TimePoint_Exp_data_del[TimePoint_Exp_data_del$exp > 0,]
                 ttest_infor <- pvalue_calc(TimePoint_Exp_data_del)
             }
@@ -221,6 +213,11 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5D_HalfLife_calculation_v
 
 
 ###TEST##################
+#test <- gsub("Delete_","","Delete_1hr_2hr")
+#test <- gsub("hr","",test)
+#test <- as.numeric(strsplit(test,"_")[[1]])
+
+
 #hour <- c(0,1,2,4,8,12)
 #exp <- c(1,0.8144329,0.8173235,0.7693528,0.4247929,0.2367443) #
 #hour <- c(0,1,2,4)

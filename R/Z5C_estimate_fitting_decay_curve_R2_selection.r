@@ -17,10 +17,12 @@ BridgeRHalfLifeCalcR2Select <- function(InputFile = "BridgeR_4_Normalized_expres
     time_points <- length(hour)
     group_number <- length(group)
     input_file <- fread(InputFile, header=T)
-    output_file <- OutputFile
+    output_file <- paste(OutputFile,".log",sep="")
+    log_file <- OutputFile
     
     ###print_header###
     cat("",file=output_file)
+    cat("",file=log_file)
     hour_label <- NULL
     CutoffDataPoint1 <- sort(CutoffDataPoint1, decreasing = T)
     CutoffDataPoint2 <- sort(CutoffDataPoint2, decreasing = F)
@@ -31,6 +33,7 @@ BridgeRHalfLifeCalcR2Select <- function(InputFile = "BridgeR_4_Normalized_expres
     for(a in 1:group_number){
         if(!is.null(hour_label)){
             cat("\t", file=output_file, append=T)
+            cat("\t", file=log_file, append=T)
         }
         hour_label <- NULL
         for(x in hour){
@@ -41,6 +44,8 @@ BridgeRHalfLifeCalcR2Select <- function(InputFile = "BridgeR_4_Normalized_expres
         infor <- colnames(input_file)[infor_st:infor_ed]
         cat(infor,hour_label, sep="\t", file=output_file, append=T)
         cat("\t", sep="", file=output_file, append=T)
+        cat(infor,hour_label, sep="\t", file=log_file, append=T)
+        cat("\t", sep="", file=log_file, append=T)
         
         for_iteration_number2 <- for_iteration_number + 1
         for(number in 1:for_iteration_number2){
@@ -50,8 +55,10 @@ BridgeRHalfLifeCalcR2Select <- function(InputFile = "BridgeR_4_Normalized_expres
             cat("\t", sep="", file=output_file, append=T)
         }
         cat("Model","R2","half_life", sep="\t", file=output_file, append=T)
+        cat("Model","R2","half_life", sep="\t", file=log_file, append=T)
     }
     cat("\n", sep="", file=output_file, append=T)
+    cat("\n", sep="", file=log_file, append=T)
     
     ###calc_RNA_half_lives###
     ###Function1#################################
@@ -137,6 +144,7 @@ BridgeRHalfLifeCalcR2Select <- function(InputFile = "BridgeR_4_Normalized_expres
         for(a in 1:group_number){
             if(a != 1){
                 cat("\t", sep="", file=output_file, append=T)
+                cat("\t", sep="", file=log_file, append=T)
             }
             infor_st <- 1 + (a - 1)*(time_points + InforColumn)
             infor_ed <- (InforColumn)*a + (a - 1)*time_points
@@ -146,9 +154,14 @@ BridgeRHalfLifeCalcR2Select <- function(InputFile = "BridgeR_4_Normalized_expres
             gene_infor <- data[infor_st:infor_ed]
             cat(gene_infor, sep="\t", file=output_file, append=T)
             cat("\t", file=output_file, append=T)
+            cat(gene_infor, sep="\t", file=log_file, append=T)
+            cat("\t", file=log_file, append=T)
+            
             exp <- as.numeric(data[exp_st:exp_ed])
             cat(exp, sep="\t", file=output_file, append=T)
             cat("\t", file=output_file, append=T)
+            cat(exp, sep="\t", file=log_file, append=T)
+            cat("\t", file=log_file, append=T)
             
             ###Raw_data
             time_point_exp_raw <- data.frame(hour,exp)
@@ -166,6 +179,7 @@ BridgeRHalfLifeCalcR2Select <- function(InputFile = "BridgeR_4_Normalized_expres
                     cat("\t", sep="", file=output_file, append=T)
                 }
                 cat("Notest","NA","NA", sep="\t", file=output_file, append=T)
+                cat("Notest","NA","NA", sep="\t", file=log_file, append=T)
             }else if(test[1] < ThresholdHalfLife[1]){ #Default: <12hr => Delete 8,12hr
                 for(number in 1:CutoffDataPoint1_length){
                     cat("Notest","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
@@ -193,9 +207,11 @@ BridgeRHalfLifeCalcR2Select <- function(InputFile = "BridgeR_4_Normalized_expres
                 R2_table <- R2_table[sortlist,]
                 result <- as.vector(as.matrix(R2_table[1,]))
                 cat(result, sep="\t", file=output_file, append=T)
+                cat(result, sep="\t", file=log_file, append=T)
             }
         }
         cat("\n", file=output_file, append=T)
+        cat("\n", file=log_file, append=T)
     }
 }
 

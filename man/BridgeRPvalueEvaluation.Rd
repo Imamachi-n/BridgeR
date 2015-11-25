@@ -8,12 +8,12 @@ Calculate RNA half-life from BRIC-seq data
 Calculate RNA half-life from BRIC-seq data
 }
 \usage{
-BridgeRPvalueEvaluation(InputFile="BridgeR_5D_HalfLife_calculation_ver4_20151119.txt",
+BridgeRPvalueEvaluation(InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
                         group,
                         hour,
                         ComparisonFile,
                         InforColumn=4,
-                        CutoffDataPoint=4,
+                        CutoffDataPointNumber=4,
                         OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt")
 }
 %- maybe also 'usage' for other objects documented here.
@@ -33,7 +33,7 @@ Vector(string)
   \item{InforColumn}{
 Integer
 }
-  \item{CutoffDataPoint}{
+  \item{CutoffDataPointNumber}{
 Integer
 }
   \item{OutputFile}{
@@ -72,12 +72,12 @@ Naoto Imamachi
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (InputFile="BridgeR_5D_HalfLife_calculation_ver4_20151119.txt",
+function (InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
                         group,
                         hour,
                         ComparisonFile,
                         InforColumn=4,
-                        CutoffDataPoint=4,
+                        CutoffDataPointNumber=4,
                         OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt")
 {
 }

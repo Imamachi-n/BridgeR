@@ -8,7 +8,7 @@ Calculate RNA half-life from BRIC-seq data
 Calculate RNA half-life from BRIC-seq data
 }
 \usage{
-BridgeRHalfLifeCalcR2Select(InputFile = "BridgeR_4_Normalized_expression_dataset_20151118.txt",
+BridgeRHalfLifeCalcR2Select(InputFile = "BridgeR_4_Normalized_expression_dataset.txt",
                             group, 
                             hour, 
                             InforColumn = 4, 
@@ -16,7 +16,7 @@ BridgeRHalfLifeCalcR2Select(InputFile = "BridgeR_4_Normalized_expression_dataset
                             CutoffDataPoint1 = c(1,2),
                             CutoffDataPoint2 = c(8,12),
                             ThresholdHalfLife = c(8,12),
-                            OutputFile = "BridgeR_5D_HalfLife_calculation_ver4_20151119.txt")
+                            OutputFile = "BridgeR_5C_HalfLife_calculation_R2_selection.txt")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -80,7 +80,7 @@ Naoto Imamachi
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (InputFile = "BridgeR_4_Normalized_expression_dataset_20151118.txt",
+function (InputFile = "BridgeR_4_Normalized_expression_dataset.txt",
                             group, 
                             hour, 
                             InforColumn = 4, 
@@ -88,7 +88,7 @@ function (InputFile = "BridgeR_4_Normalized_expression_dataset_20151118.txt",
                             CutoffDataPoint1 = c(1,2),
                             CutoffDataPoint2 = c(8,12),
                             ThresholdHalfLife = c(8,12),
-                            OutputFile = "BridgeR_5D_HalfLife_calculation_ver4_20151119.txt")
+                            OutputFile = "BridgeR_5C_HalfLife_calculation_R2_selection.txt")
 {
 }
 }

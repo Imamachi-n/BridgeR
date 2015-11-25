@@ -19,7 +19,7 @@ BridgeRCore(InputFiles,
                         CutoffDataPoint1 = c(1,2),
                         CutoffDataPoint2 = c(8,12),
                         ThresholdHalfLife = c(8,12),
-                        CutoffRelExp=0.1,
+                        CutoffRelExp=0.001,
                         ModelMode="R2_selection")
 }
 %- maybe also 'usage' for other objects documented here.
@@ -107,7 +107,7 @@ function (InputFiles,
                         CutoffDataPoint1 = c(1,2),
                         CutoffDataPoint2 = c(8,12),
                         ThresholdHalfLife = c(8,12),
-                        CutoffRelExp=0.1,
+                        CutoffRelExp=0.001,
                         ModelMode="R2_selection") 
 {
 }

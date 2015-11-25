@@ -8,7 +8,18 @@ Custom BRIC-seq data analysis pipeline
 RNA half-life for each gene is calculated using your custom normalization factor such as the RPKM of Luciferase.
 }
 \usage{
-BridgeRCustom(YourNormFactor, InputFiles, InforColumn = 4, group, hour, RPKMcutoff = 0.1, SelectNormFactor = T, CutoffRelExp = 0.1, CutoffDataPoint = 3, UseOldModel=F)
+BridgeRCustom(YourNormFactor, 
+                          InputFiles, 
+                          InforColumn=4, 
+                          group, 
+                          hour, 
+                          RPKMcutoff=0.1,
+                          CutoffDataPointNumber = 4,
+                          CutoffDataPoint1 = c(1,2),
+                          CutoffDataPoint2 = c(8,12),
+                          ThresholdHalfLife = c(8,12),
+                          CutoffRelExp=0.001,
+                          ModelMode="R2_selection")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,16 +41,22 @@ Vector(number)
   \item{RPKMcutoff}{
 Float
 }
-  \item{SelectNormFactor}{
-Bool(True or False)
+  \item{CutoffDataPointNumber}{
+Integer
+}
+  \item{CutoffDataPoint1}{
+Vector(Integer or float)
+}
+  \item{CutoffDataPoint2}{
+Vector(Integer or float)
+}
+  \item{ThresholdHalfLife}{
+Vector(Integer or float)
 }
   \item{CutoffRelExp}{
 Float
 }
-  \item{CutoffDataPoint}{
-Integer
-}
-  \item{UseOldModel}{
+  \item{ModelMode}{
 Bool(True or False)
 }
 }
@@ -83,29 +100,20 @@ Naoto Imamachi
 #BridgeRCustom(YourNormFactor=mynf, InputFiles=files, group=group, hour=hour)
 
 ## The function is currently defined as
-function (YourNormFactor, InputFiles, InforColumn = 4, group, 
-    hour, RPKMcutoff = 0.1, SelectNormFactor = T, CutoffRelExp = 0.1, 
-    CutoffDataPoint = 3, UseOldModel=F) 
+function (YourNormFactor, 
+                          InputFiles, 
+                          InforColumn=4, 
+                          group, 
+                          hour, 
+                          RPKMcutoff=0.1,
+                          CutoffDataPointNumber = 4,
+                          CutoffDataPoint1 = c(1,2),
+                          CutoffDataPoint2 = c(8,12),
+                          ThresholdHalfLife = c(8,12),
+                          CutoffRelExp=0.001,
+                          ModelMode="R2_selection") 
 {
-    library(data.table)
-    library(ggplot2)
-    BridgeRDataSetFromCuffnorm(CuffnormFiles = InputFiles, group = group, 
-        hour = hour, cutoff = RPKMcutoff, InforColumn = InforColumn, 
-        OutputFile = "BridgeR_1_Relative_expression_dataset.txt")
-    BridgeRDatasetChecker(InputFile = "BridgeR_1_Relative_expression_dataset.txt", 
-        group = group, hour = hour, InforColumn = InforColumn, 
-        OutputFile = "BridgeR_2_Relative_RPKM_distribution")
-    BridgeRNormalizationForLuc2(filename = "BridgeR_1_Relative_expression_dataset.txt", 
-        group = group, hour = hour, InforColumn = InforColumn, 
-        NormFactor = YourNormFactor, OutputFile = "BridgeR_4_Normalized_expression_dataset.txt")
-    BridgeRDatasetChecker(InputFile = "BridgeR_4_Normalized_expression_dataset.txt", 
-        group = group, hour = hour, InforColumn = InforColumn, 
-        OutputFile = "BridgeR_4B_Normalized_RPKM_distribution")
-    BridgeRHalfLifeCalculation(filename = "BridgeR_4_Normalized_expression_dataset.txt", 
-        group = group, hour = hour, InforColumn = InforColumn, 
-        CutoffRelExp = CutoffRelExp, CutoffDataPoint = CutoffDataPoint, 
-        OutputFile = "BridgeR_5_HalfLife_calculation.txt")
-  }
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

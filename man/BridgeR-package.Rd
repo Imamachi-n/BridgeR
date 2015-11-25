@@ -3,10 +3,10 @@
 \alias{BridgeR}
 \docType{package}
 \title{
-\packageTitle{BridgeR}
+An R library for comprehensive BRIC-seq data analysis tool
 }
 \description{
-\packageDescription{BridgeR}
+Comprehensive BRIC-seq data analysis tool
 }
 \details{
 
@@ -16,15 +16,15 @@ The DESCRIPTION file:
 ~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-\packageAuthor{BridgeR}
+Naoto Imamachi
 
-Maintainer: \packageMaintainer{BridgeR}
+Maintainer: Naoto Imamachi
 }
 \references{
 https://github.com/Naoto-Imamachi/BRIC-seq_data_analysis/tree/master/BridgeR
 }
 ~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation directory ~~
-\keyword{ package }
+\keyword{ BRIC-seq }
 \seealso{
 
 }

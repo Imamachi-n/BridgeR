@@ -8,7 +8,12 @@ Calibrate RNA half-life.
 Calibrate RNA half-life.
 }
 \usage{
-BridgeRHalfLifeCalibration(InputFile = "BridgeR_5_HalfLife_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, OutputFile = "BridgeR_6_HalfLife_Calibration")
+BridgeRHalfLifeCalibration(InputFile = "BridgeR_5B_HalfLife_calculation_3model.txt", 
+                                       group, 
+                                       hour, 
+                                       ComparisonFile, 
+                                       InforColumn = 4, 
+                                       OutputFile = "BridgeR_6_Calibrated_HalfLife_calculation_3model.txt")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -65,40 +70,14 @@ Naoto Imamachi
 #BridgeRHalfLifeComparison(filename=inputfile, group=group, hour=hour, ComparisonFile=compfile, OutputFig=outputfig)
 
 ## The function is currently defined as
-function(filename = "BridgeR_5_HalfLife_calculation.txt", group,
-    hour, ComparisonFile, InforColumn = 4, OutputFile = "BridgeR_7_HalfLife_Calibration")
+function(InputFile = "BridgeR_5B_HalfLife_calculation_3model.txt", 
+                                       group, 
+                                       hour, 
+                                       ComparisonFile, 
+                                       InforColumn = 4, 
+                                       OutputFile = "BridgeR_6_Calibrated_HalfLife_calculation_3model.txt")
 {
-    #ComparisonFile: The length of vector must be 2 => c("Control","Knockdown")
-    ###Prepare_file_infor###
-    time_points <- length(hour)
-    group_number <- length(group)
-    comp_file_number <- NULL
-    for(a in 1:length(ComparisonFile)){
-        comp_file_number <- append(comp_file_number, which(group == ComparisonFile[a]))
-    }
-    
-    input_file <- fread(filename, header=T)
-    #figfile <- paste(OutputFig,"_",group[comp_file_number[1]],"_vs_",group[comp_file_number[2]],".png", sep="")
-    #png(filename=figfile,width = 1200, height = 1200)
-    
-    ###Plot_Half-life_comparison###
-    gene_infor <- input_file[,1:InforColumn,with=F]
-    half_life_column_1 <- comp_file_number[1]*(time_points + InforColumn + 8) #number
-    half_1 <- as.numeric(input_file[[half_life_column_1]])
-    half_life_column_2 <- comp_file_number[2]*(time_points + InforColumn + 8) #number
-    half_2 <- as.numeric(input_file[[half_life_column_2]])
-    half_data <- data.table(half1=half_1,half2=half_2)
-    
-    test <- lm(half2 ~ half1 + 0, data=half_data)
-    coef <- as.numeric(test$coefficients)
-    adjusted_half_2 <- half_2/coef
-    
-    adjusted_half_data <- data.table(half1=half_1,half2=adjusted_half_2)
-    adjusted_half_data <- cbind(gene_infor, adjusted_half_data)
-    
-    result_file <- paste(OutputFile,"_",group[comp_file_number[1]],"_vs_",group[comp_file_number[2]],".txt",sep="")
-    write.table(adjusted_half_data, file=result_file,sep="\t",row.names=FALSE)
-  }
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

@@ -9,7 +9,8 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
                                     ComparisonFile,
                                     InforColumn=4,
                                     CutoffDataPointNumber = 4,
-                                    OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt"){
+                                    OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",
+                                    Calibration=F){
     ###Prepare_file_infor###
     TimeDataSize <- length(hour)
     group_number <- length(group)
@@ -22,7 +23,10 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
     
     ###Print_header###
     cat("", file=output_file) #Reset output file
+    halflife_table <- NULL
+    correction_value <- NULL
     hour_label <- NULL
+    
     for(SampleNum in comp_file_number){
         if(!is.null(hour_label)){
             cat("\t", file=output_file, append=T)
@@ -39,11 +43,24 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
         cat("Model","Decay_rate_coef","coef_error","coef_p-value","R2","Adjusted_R2","Residual_standard_error","half_life","half_life_ori",
             "halflife_residual_minus","halflife_residual_minus_R2","half_exp_plus","halflife_residual_plus_R2",
             sep="\t", file=output_file, append=T)
+        
+        if(Calibration == T){
+            halflife_index <- infor_ed + TimeDataSize + 3
+            halflife <- input_file[[halflife_index]]
+            halflife_table <- cbind(halflife_table, halflife)
+        }
     }
     cat("\t", sep="", file=output_file, append=T)
     comp_label <- paste("log2(Relative half-life[",ComparisonFile[2],"/",ComparisonFile[1],"])", sep="")
     cat(comp_label,"p-value(Welch Modified Two-Sample t-test)", sep="\t", file=output_file, append=T)
     cat("\n", sep="", file=output_file, append=T)
+    
+    if(Calibration == T){
+        colnames(halflife_table) <- c("x","y")
+        test_lm <- lm(y ~ x + 0, data=as.data.frame(halflife_table))
+        correction_value <- as.numeric(test_lm$coefficients)
+        print("Correction value: ", correction_value)
+    }
     
     ###Calc_p-value###
     pvalue_calc <- function(DataFrame){
@@ -59,8 +76,19 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
                     r_squared <- model_summary$r.squared
                     adj_r_squared <- model_summary$adj.r.squared
                     residual_standard_err <- model_summary$sigma
+                    
                     half_life <- log(2)/coef
                     half_life_w <- half_life
+                    halflife_value <- log(0.5)
+                    
+                    if(Calibration == T){
+                        if(flg == 1){
+                            halflife_w <- halflife/correction_value
+                            halflife <- halflife/correction_value
+                            halflife_value <- -coef*halflife
+                        }
+                    }
+                    
                     if(coef < 0){
                         half_life <- Inf
                         half_life_w <- 24
@@ -92,7 +120,7 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
                     predicted_exp_lwr_coef <- predicted_exp_lwr_model_summary$coefficients[2]
                     predicted_exp_lwr_intercept <- predicted_exp_lwr_model_summary$coefficients[1]
                     predicted_exp_lwr_R2 <- predicted_exp_lwr_model_summary$r.squared #
-                    predicted_exp_lwr_halflife <- (-log(2) - predicted_exp_lwr_intercept)/predicted_exp_lwr_coef
+                    predicted_exp_lwr_halflife <- (halflife_value - predicted_exp_lwr_intercept)/predicted_exp_lwr_coef
                     
                     predicted_exp_upr_table <- data.frame(hour=DataFrame$hour, exp=predicted_exp_upr)
                     predicted_exp_upr_model <- lm(predicted_exp_upr_table$exp ~ predicted_exp_upr_table$hour)
@@ -100,7 +128,7 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
                     predicted_exp_upr_coef <- predicted_exp_upr_model_summary$coefficients[2]
                     predicted_exp_upr_intercept <- predicted_exp_upr_model_summary$coefficients[1]
                     predicted_exp_upr_R2 <- predicted_exp_upr_model_summary$r.squared #
-                    predicted_exp_upr_halflife <- (-log(2) - predicted_exp_upr_intercept)/predicted_exp_upr_coef
+                    predicted_exp_upr_halflife <- (halflife_value - predicted_exp_upr_intercept)/predicted_exp_upr_coef
                     
                     halflife_SD_minus <- half_life - predicted_exp_lwr_halflife #
                     halflife_SD_plus <- predicted_exp_upr_halflife - half_life #

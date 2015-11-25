@@ -9,12 +9,13 @@ Calculate RNA half-life from BRIC-seq data
 }
 \usage{
 BridgeRPvalueEvaluation(InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
-                        group,
-                        hour,
-                        ComparisonFile,
-                        InforColumn=4,
-                        CutoffDataPointNumber=4,
-                        OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt")
+                                    group,
+                                    hour,
+                                    ComparisonFile,
+                                    InforColumn=4,
+                                    CutoffDataPointNumber = 4,
+                                    OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",
+                                    Calibration=F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +39,9 @@ Integer
 }
   \item{OutputFile}{
 File path/name
+}
+  \item{Calibration}{
+Bool (True or False)
 }
 }
 \details{
@@ -73,12 +77,13 @@ Naoto Imamachi
 
 ## The function is currently defined as
 function (InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
-                        group,
-                        hour,
-                        ComparisonFile,
-                        InforColumn=4,
-                        CutoffDataPointNumber=4,
-                        OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt")
+                                    group,
+                                    hour,
+                                    ComparisonFile,
+                                    InforColumn=4,
+                                    CutoffDataPointNumber = 4,
+                                    OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",
+                                    Calibration=F)
 {
 }
 }

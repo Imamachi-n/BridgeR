@@ -208,7 +208,8 @@ BridgeRCompare <- function(InputFile="BridgeR_5C_HalfLife_calculation_R2_selecti
                            hour, 
                            ComparisonFile,
                            CutoffDataPointNumber = 4,
-                           ModelMode="R2_selection"){
+                           ModelMode="R2_selection",
+                           Calibration=F){
     if(ModelMode == "Three_model"){
         BridgeRCompareFig(InputFile=InputFile,
                           InforColumn = 4,
@@ -217,14 +218,29 @@ BridgeRCompare <- function(InputFile="BridgeR_5C_HalfLife_calculation_R2_selecti
                           ComparisonFile = ComparisonFile,
                           ModelMode="R2_selection")
     }else if(ModelMode == "Raw_model" || ModelMode == "R2_selection"){
-        BridgeRPvalueEvaluation(InputFile=InputFile,
-                                group,
-                                hour,
-                                ComparisonFile,
-                                InforColumn = InforColumn,
-                                CutoffDataPointNumber = CutoffDataPointNumber,
-                                OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt")
-        BridgeRCompareFig(InputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",
+        outputfile_name <- NULL
+        if(Calibration == T){
+            outputfile_name <- "BridgeR_6B_Calibrated_HalfLife_Pvalue_estimation.txt"
+            BridgeRPvalueEvaluation(InputFile=InputFile,
+                                    group,
+                                    hour,
+                                    ComparisonFile,
+                                    InforColumn = InforColumn,
+                                    CutoffDataPointNumber = CutoffDataPointNumber,
+                                    OutputFile=outputfile_name,
+                                    Calibration=Calibration)
+        }else if(Calibration == F){
+            outputfile_name <- "BridgeR_6_HalfLife_Pvalue_estimation.txt"
+            BridgeRPvalueEvaluation(InputFile=InputFile,
+                                    group,
+                                    hour,
+                                    ComparisonFile,
+                                    InforColumn = InforColumn,
+                                    CutoffDataPointNumber = CutoffDataPointNumber,
+                                    OutputFile=outputfile_name,
+                                    Calibration=Calibration)
+        }
+        BridgeRCompareFig(InputFile=outputfile_name,
                           InforColumn = 4,
                           group = group, 
                           hour = hour, 

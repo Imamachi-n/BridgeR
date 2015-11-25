@@ -12,7 +12,8 @@ BridgeRCompare(InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
                            hour, 
                            ComparisonFile,
                            CutoffDataPointNumber = 4,
-                           ModelMode="R2_selection")
+                           ModelMode="R2_selection",
+                           Calibration=F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,6 +37,9 @@ Integer
 }
   \item{ModelMode}{
 Mode 
+}
+  \item{Calibration}{
+Bool (True or False) 
 }
 }
 \details{
@@ -71,7 +75,8 @@ function (InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
                            hour, 
                            ComparisonFile,
                            CutoffDataPointNumber = 4,
-                           ModelMode="R2_selection") 
+                           ModelMode="R2_selection",
+                           Calibration=F)
 {
 }
 }

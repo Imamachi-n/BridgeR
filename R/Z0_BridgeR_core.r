@@ -49,7 +49,7 @@ BridgeRCore <- function(InputFiles,
                           hour=hour, 
                           InforColumn=InforColumn, 
                           OutputFile="BridgeR_4B_Normalized_RPKM_distribution")
-    BridgeRHalfLifecalc(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt",
+    BridgeRHalfLifeCalc(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt",
                         InforColumn = InforColumn,
                         group = group, 
                         hour = hour,
@@ -102,7 +102,7 @@ BridgeRHKGenes <- function(InputFiles,
                           hour=hour, 
                           InforColumn=InforColumn, 
                           OutputFile="BridgeR_4B_Normalized_RPKM_distribution")
-    BridgeRHalfLifecalc(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt",
+    BridgeRHalfLifeCalc(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt",
                         InforColumn = InforColumn,
                         group = group, 
                         hour = hour,
@@ -148,7 +148,7 @@ BridgeRCustom <- function(YourNormFactor,
                           hour=hour, 
                           InforColumn=InforColumn, 
                           OutputFile="BridgeR_4B_Normalized_RPKM_distribution")
-    BridgeRHalfLifecalc(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt",
+    BridgeRHalfLifeCalc(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt",
                         InforColumn = InforColumn,
                         group = group, 
                         hour = hour,
@@ -160,7 +160,7 @@ BridgeRCustom <- function(YourNormFactor,
                         ModelMode = "R2_selection")
 }
 
-BridgeRHalfLifecalc <- function(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt", 
+BridgeRHalfLifeCalc <- function(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt", 
                                 InforColumn = 4, 
                                 group, 
                                 hour,
@@ -168,10 +168,10 @@ BridgeRHalfLifecalc <- function(InputFiles = "BridgeR_4_Normalized_expression_da
                                 CutoffDataPoint1 = c(1,2),
                                 CutoffDataPoint2 = c(8,12),
                                 ThresholdHalfLife = c(8,12),
-                                CutoffRelExp=0.001,
-                                ModelMode="R2_selection"){
+                                CutoffRelExp = 0.001,
+                                ModelMode = "R2_selection"){
     if(ModelMode == "Raw_model"){
-        BridgeRHalfLifeCalculation(filename=InputFiles, 
+        BridgeRHalfLifeCalcRaw(filename=InputFiles, 
                                    group=group, 
                                    hour=hour, 
                                    InforColumn=InforColumn, 
@@ -202,11 +202,73 @@ BridgeRHalfLifecalc <- function(InputFiles = "BridgeR_4_Normalized_expression_da
     }
 }
 
-BridgeRCompare <- function(InputFile="BridgeR_5_HalfLife_calculation.txt", InforColumn=4, group, hour, ComparisonFile){
-    BridgeRHalfLifeComparison(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, LogScale=F, OutputFig="BridgeR_5_HalfLife_Comparison_ScatteredPlot")
-    BridgeRHalfLifeDistribution(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, OutputFig="BridgeR_5_HalfLife_Distribution_LineGraph")
-    BridgeRHalfLifeDifferenceHist(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, BinwidthFig=0.01, OutputFig="BridgeR_5_HalfLife_Difference_LineGraph")
-    BridgeRHalfLifeDifferenceBox(filename=InputFile, InforColumn=4, group=group, hour=hour, ComparisonFile=ComparisonFile, OutputFig= "BridgeR_5_HalfLife_Comparison_BoxPlot")
+BridgeRCompare <- function(InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
+                           InforColumn = 4,
+                           group, 
+                           hour, 
+                           ComparisonFile,
+                           CutoffDataPointNumber = 4,
+                           ModelMode="R2_selection"){
+    if(ModelMode == "Three_model"){
+        BridgeRCompareFig(InputFile=InputFile,
+                          InforColumn = 4,
+                          group = group, 
+                          hour = hour, 
+                          ComparisonFile = ComparisonFile,
+                          ModelMode="R2_selection")
+    }else if(ModelMode == "Raw_model" || ModelMode == "R2_selection"){
+        BridgeRPvalueEvaluation(InputFile=InputFile,
+                                group,
+                                hour,
+                                ComparisonFile,
+                                InforColumn = InforColumn,
+                                CutoffDataPointNumber = CutoffDataPointNumber,
+                                OutputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt")
+        BridgeRCompareFig(InputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",
+                          InforColumn = 4,
+                          group = group, 
+                          hour = hour, 
+                          ComparisonFile = ComparisonFile,
+                          ModelMode="R2_selection")
+    }
+}
+
+BridgeRCompareFig <- function(InputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",
+                              InforColumn = 4,
+                              group, 
+                              hour, 
+                              ComparisonFile,
+                              ModelMode="R2_selection"){
+        BridgeRHalfLifeComparison(filename=InputFile, 
+                                  InforColumn=4, 
+                                  group=group, 
+                                  hour=hour, 
+                                  ComparisonFile=ComparisonFile, 
+                                  LogScale=F, 
+                                  OutputFig="BridgeR_7_HalfLife_Comparison_ScatteredPlot",
+                                  ModelMode = ModelMode)
+        BridgeRHalfLifeDistribution(filename=InputFile, 
+                                    InforColumn=4, 
+                                    group=group, 
+                                    hour=hour, 
+                                    ComparisonFile=ComparisonFile, 
+                                    OutputFig="BridgeR_7_HalfLife_Distribution_LineGraph",
+                                    ModelMode = ModelMode)
+        BridgeRHalfLifeDifferenceHist(filename=InputFile,
+                                      InforColumn=4, 
+                                      group=group, 
+                                      hour=hour, 
+                                      ComparisonFile=ComparisonFile, 
+                                      BinwidthFig=0.01, 
+                                      OutputFig="BridgeR_7_HalfLife_Difference_LineGraph",
+                                      ModelMode = ModelMode)
+        BridgeRHalfLifeDifferenceBox(filename=InputFile, 
+                                     InforColumn=4, 
+                                     group=group, 
+                                     hour=hour, 
+                                     ComparisonFile=ComparisonFile, 
+                                     OutputFig= "BridgeR_7_HalfLife_Comparison_BoxPlot",
+                                     ModelMode = ModelMode)
 }
 
 BridgeRCalibration <- function(InputFile="BridgeR_5_HalfLife_calculation.txt", InforColumn=4, group, hour, ComparisonFile){

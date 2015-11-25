@@ -8,7 +8,15 @@ Draw histgram to compare RNA half-life difference between two conditions.
 Draw histgram to compare RNA half-life difference between two conditions.
 }
 \usage{
-BridgeRHalfLifeDifferenceHist(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, BinwidthFig = 0.01, Calibration = F, OutputFig = "BridgeR_5_Half-life_difference_Histgram")
+BridgeRHalfLifeDifferenceHist(filename = "BridgeR_5C_HalfLife_calculation_R2_selection.txt", 
+                                          group, 
+                                          hour, 
+                                          ComparisonFile, 
+                                          InforColumn = 4, 
+                                          BinwidthFig = 0.01, 
+                                          Calibration = F, 
+                                          OutputFig = "BridgeR_7_HalfLife_Difference_LineGraph",
+                                          ModelMode = "R2_selection")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,6 +43,9 @@ Bool(True or False)
 }
   \item{OutputFig}{
 File path/name
+}
+  \item{ModelMode}{
+Mode
 }
 }
 \details{
@@ -76,44 +87,17 @@ Naoto Imamachi
 #BridgeRHalfLifeDifferenceHist(filename=inputfile, group=group, hour=hour, ComparisonFile=compfile, OutputFig=outputfig)
 
 ## The function is currently defined as
-function (filename = "BridgeR_4_half-life_calculation.txt", group, 
-    hour, ComparisonFile, InforColumn = 4, BinwidthFig = 0.01, 
-    OutputFig = "BridgeR_5_Half-life_difference_Histgram") 
+function (filename = "BridgeR_5C_HalfLife_calculation_R2_selection.txt", 
+                                          group, 
+                                          hour, 
+                                          ComparisonFile, 
+                                          InforColumn = 4, 
+                                          BinwidthFig = 0.01, 
+                                          Calibration = F, 
+                                          OutputFig = "BridgeR_7_HalfLife_Difference_LineGraph",
+                                          ModelMode = "R2_selection")
 {
-    time_points <- length(hour)
-    group_number <- length(group)
-    comp_file_number <- NULL
-    for (a in 1:length(ComparisonFile)) {
-        comp_file_number <- append(comp_file_number, which(group == 
-            ComparisonFile[a]))
-    }
-    input_file <- fread(filename, header = T)
-    figfile <- paste(OutputFig, "_", group[comp_file_number[1]], 
-        "_vs_", group[comp_file_number[2]], ".png", sep = "")
-    png(filename = figfile, width = 1200, height = 1200)
-    half_life_column_1 <- comp_file_number[1] * (time_points + 
-        InforColumn + 8)
-    half_1 <- input_file[[half_life_column_1]]
-    half_life_column_2 <- comp_file_number[2] * (time_points + 
-        InforColumn + 8)
-    half_2 <- input_file[[half_life_column_2]]
-    div_half <- log2(half_2/half_1)
-    print(summary(half_1))
-    print(summary(half_2))
-    plot_data <- data.frame(div_half)
-    p.scatter <- ggplot()
-    p.scatter <- p.scatter + layer(data = plot_data, mapping = aes(x = div_half), 
-        geom = "freqpoly", binwidth = BinwidthFig, size = 1.2)
-    p.scatter <- p.scatter + xlim(min(plot_data$div_half), max(plot_data$div_half))
-    p.scatter <- p.scatter + ggtitle("Half-life difference")
-    name_xlab <- paste("Relative half-life(", group[comp_file_number[1]], 
-        "_vs_", group[comp_file_number[2]], ")", sep = "")
-    p.scatter <- p.scatter + xlab(name_xlab)
-    p.scatter <- p.scatter + ylab("Transcripts #")
-    plot(p.scatter)
-    dev.off()
-    plot.new()
-  }
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

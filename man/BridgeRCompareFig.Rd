@@ -1,5 +1,5 @@
-\name{BridgeRHalfLifeComparisonWithPvalue}
-\alias{BridgeRHalfLifeComparisonWithPvalue}
+\name{BridgeRCompareFig}
+\alias{BridgeRCompareFig}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Draw scattered plot to compare RNA half-life between two conditions.
@@ -8,19 +8,20 @@ Draw scattered plot to compare RNA half-life between two conditions.
 Draw scattered plot to compare RNA half-life between two conditions.
 }
 \usage{
-BridgeRHalfLifeComparisonWithPvalue(filename = "BridgeR_7_HalfLife_Calibration.txt",
-                                    group,
-                                    hour,
-                                    ComparisonFile,
-                                    InforColumn = 4,
-                                    LogScale = F,
-                                    Calibration=F,
-                                    OutputFig = "BridgeR_7_Halflife_comparison")
+BridgeRCompareFig(InputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",
+                              InforColumn = 4,
+                              group, 
+                              hour, 
+                              ComparisonFile,
+                              ModelMode="R2_selection")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{filename}{
+  \item{InputFile}{
 File path/name
+}
+  \item{InforColumn}{
+Integer
 }
   \item{group}{
 Vector(string)
@@ -31,17 +32,8 @@ Vector(number)
   \item{ComparisonFile}{
 Vector(string)
 }
-  \item{InforColumn}{
-Integer
-}
-  \item{LogScale}{
-Bool(True or False)
-}
-  \item{Calibration}{
-Bool(True or False)
-}
-  \item{OutputFig}{
-File path/name
+  \item{ModelMode}{
+Mode
 }
 }
 \details{
@@ -62,7 +54,7 @@ https://github.com/Naoto-Imamachi/BRIC-seq_data_analysis/tree/master/BridgeR
 Naoto Imamachi
 }
 \note{
-2015-11-05
+2015-11-25
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -74,22 +66,14 @@ Naoto Imamachi
 ##---- Should be DIRECTLY executable !! ----
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
-#inputfile <- "BridgeR_5_HalfLife_calculation.txt"
-#outputfig <- "BridgeR_5_HalfLife_Comparison_ScatteredPlot"
-#group <- c("Control","knockdown1","knockdown2")
-#hour <- c(0,1,2,4,8,12)
-#compfile <- c("Control","Knockdown1")
-
-#BridgeRHalfLifeComparison(filename=inputfile, group=group, hour=hour, ComparisonFile=compfile, OutputFig=outputfig)
 
 ## The function is currently defined as
-function (filename = "BridgeR_7_HalfLife_Calibration.txt",
-          group, 
-          hour,
-          ComparisonFile,
-          InforColumn = 4,
-          LogScale = F,
-          OutputFig = "BridgeR_7_Halflife_comparison") 
+function (InputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",
+                              InforColumn = 4,
+                              group, 
+                              hour, 
+                              ComparisonFile,
+                              ModelMode="R2_selection")
 {
 }
 }

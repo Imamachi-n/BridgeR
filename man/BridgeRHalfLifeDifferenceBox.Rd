@@ -8,7 +8,14 @@ Draw boxplot to compare RNA half-life distribution between two conditions.
 Draw boxplot to compare RNA half-life distribution between two conditions.
 }
 \usage{
-BridgeRHalfLifeDifferenceBox(filename = "BridgeR_4_half-life_calculation.txt", group, hour, ComparisonFile, InforColumn = 4, Calibration = F, OutputFig = "BridgeR_5_Half-life_difference_Boxplot")
+BridgeRHalfLifeDifferenceBox(filename = "BridgeR_5C_HalfLife_calculation_R2_selection.txt", 
+                                         group, 
+                                         hour, 
+                                         ComparisonFile, 
+                                         InforColumn = 4, 
+                                         Calibration = F, 
+                                         OutputFig = "BridgeR_7_HalfLife_Comparison_BoxPlot",
+                                         ModelMode = "R2_selection")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,6 +39,9 @@ Bool(True or False)
 }
   \item{OutputFig}{
 File path/name
+}
+  \item{ModelMode}{
+Mode
 }
 }
 \details{
@@ -73,50 +83,16 @@ Naoto Imamachi
 #BridgeRHalfLifeDifferenceBox(filename=inputfile, group=group, hour=hour, ComparisonFile=compfile, OutputFig=outputfig)
 
 ## The function is currently defined as
-function (filename = "BridgeR_4_half-life_calculation.txt", group, 
-    hour, ComparisonFile, InforColumn = 4, OutputFig = "BridgeR_5_Half-life_difference_Boxplot") 
+function (filename = "BridgeR_5C_HalfLife_calculation_R2_selection.txt", 
+                                         group, 
+                                         hour, 
+                                         ComparisonFile, 
+                                         InforColumn = 4, 
+                                         Calibration = F, 
+                                         OutputFig = "BridgeR_7_HalfLife_Comparison_BoxPlot",
+                                         ModelMode = "R2_selection") 
 {
-    time_points <- length(hour)
-    group_number <- length(group)
-    comp_file_number <- NULL
-    for (a in 1:length(ComparisonFile)) {
-        comp_file_number <- append(comp_file_number, which(group == 
-            ComparisonFile[a]))
-    }
-    input_file <- fread(filename, header = T)
-    figfile <- paste(OutputFig, "_", group[comp_file_number[1]], 
-        "_vs_", group[comp_file_number[2]], ".png", sep = "")
-    fig_width <- 200 * length(ComparisonFile)
-    png(filename = figfile, width = fig_width, height = 1200)
-    half_life_column_1 <- comp_file_number[1] * (time_points + 
-        InforColumn + 8)
-    half_1 <- input_file[[half_life_column_1]]
-    half_1 <- half_1[!is.na(half_1)]
-    half_1_number <- length(half_1)
-    half_1_label <- rep(ComparisonFile[1], half_1_number)
-    plot_data_1 <- data.frame(half_1, half_1_label)
-    colnames(plot_data_1) <- c("half_data", "label")
-    half_life_column_2 <- comp_file_number[2] * (time_points + 
-        InforColumn + 8)
-    half_2 <- input_file[[half_life_column_2]]
-    half_2 <- half_2[!is.na(half_2)]
-    half_2_number <- length(half_2)
-    half_2_label <- rep(ComparisonFile[2], half_2_number)
-    plot_data_2 <- data.frame(half_2, half_2_label)
-    colnames(plot_data_2) <- c("half_data", "label")
-    print(summary(half_1))
-    print(summary(half_2))
-    plot_data <- rbind(plot_data_1, plot_data_2)
-    p.boxplot <- ggplot()
-    p.boxplot <- p.boxplot + layer(data = plot_data, mapping = aes(x = label, 
-        y = half_data), geom = "boxplot")
-    p.boxplot <- p.boxplot + ylim(0, 24)
-    p.boxplot <- p.boxplot + ggtitle("Half-life difference")
-    p.boxplot <- p.boxplot + ylab("Half-life")
-    plot(p.boxplot)
-    dev.off()
-    plot.new()
-  }
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

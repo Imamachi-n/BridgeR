@@ -42,7 +42,7 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
     }
     cat("\t", sep="", file=output_file, append=T)
     comp_label <- paste("log2(Relative half-life[",ComparisonFile[2],"/",ComparisonFile[1],"])", sep="")
-    cat(comp_label,"p-value(Welch Modified Two-Sample t-test", sep="\t", file=output_file, append=T)
+    cat(comp_label,"p-value(Welch Modified Two-Sample t-test)", sep="\t", file=output_file, append=T)
     cat("\n", sep="", file=output_file, append=T)
     
     ###Calc_p-value###

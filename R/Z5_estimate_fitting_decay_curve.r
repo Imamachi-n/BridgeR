@@ -4,7 +4,13 @@
 #Date: 2015-10-08
 
 ###Estimate_normalization_factor_function###
-BridgeRHalfLifeCalculation <- function(filename = "BridgeR_4_Normalized_expression_data.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, OutputFile = "BridgeR_5_half-life_calculation.txt"){
+BridgeRHalfLifeCalcRaw <- function(filename = "BridgeR_4_Normalized_expression_data.txt", 
+                                   group, 
+                                   hour, 
+                                   InforColumn = 4, 
+                                   CutoffRelExp = 0.1, 
+                                   CutoffDataPoint = 3, 
+                                   OutputFile = "BridgeR_5_HalfLife_calculation.txt"){
     ###Prepare_file_infor###
     time_points <- length(hour)
     group_number <- length(group)
@@ -27,7 +33,7 @@ BridgeRHalfLifeCalculation <- function(filename = "BridgeR_4_Normalized_expressi
         infor <- colnames(input_file)[infor_st:infor_ed]
         cat(infor,hour_label, sep="\t", file=output_file, append=T)
         cat("\t", sep="", file=output_file, append=T)
-        cat("Model","Decay_rate_coef","coef_error","coef_p-value","R2","Adjusted_R2","Residual_standard_error","half_life", sep="\t", file=output_file, append=T)
+        cat("Model","R2","half_life", sep="\t", file=output_file, append=T)
     }
     cat("\n", sep="", file=output_file, append=T)
     
@@ -58,24 +64,21 @@ BridgeRHalfLifeCalculation <- function(filename = "BridgeR_4_Normalized_expressi
                     model <- lm(log(time_point_exp$exp) ~ time_point_exp$hour - 1)
                     model_summary <- summary(model)
                     coef <- -model_summary$coefficients[1]
-                    coef_error <- model_summary$coefficients[2]
-                    coef_p <- model_summary$coefficients[4]
+                    #coef_error <- model_summary$coefficients[2]
+                    #coef_p <- model_summary$coefficients[4]
                     r_squared <- model_summary$r.squared
-                    adj_r_squared <- model_summary$adj.r.squared
-                    residual_standard_err <- model_summary$sigma
+                    #adj_r_squared <- model_summary$adj.r.squared
+                    #residual_standard_err <- model_summary$sigma
                     half_life <- log(2)/coef
                     if(coef < 0 || half_life >= 24){
                         half_life <- 24
                     }
-                    #if(coef < 0){
-                    #    half_life <- Inf
-                    #}
-                    cat("Exponential_Decay_Model",coef,coef_error,coef_p,r_squared,adj_r_squared,residual_standard_err,half_life, sep="\t", file=output_file, append=T)
+                    cat("Raw",r_squared,half_life, sep="\t", file=output_file, append=T)
                 }else{
-                    cat("few_data","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
+                    cat("Notest","NA","NA", sep="\t", file=output_file, append=T)
                 }
             }else{
-                cat("low_expresion","NA","NA","NA","NA","NA","NA","NA", sep="\t", file=output_file, append=T)
+                cat("Notest","NA","NA", sep="\t", file=output_file, append=T)
             }
         }
         cat("\n", file=output_file, append=T)

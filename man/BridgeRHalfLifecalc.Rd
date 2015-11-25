@@ -1,5 +1,5 @@
-\name{BridgeRHalfLifecalc}
-\alias{BridgeRHalfLifecalc}
+\name{BridgeRHalfLifeCalc}
+\alias{BridgeRHalfLifeCalc}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Calculation of RNA half-life for each gene
@@ -8,7 +8,7 @@ Calculation of RNA half-life for each gene
 Calculation of RNA half-life for each gene.
 }
 \usage{
-BridgeRHalfLifecalc(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt", 
+BridgeRHalfLifeCalc(InputFiles = "BridgeR_4_Normalized_expression_dataset.txt", 
                                 InforColumn = 4, 
                                 group, 
                                 hour,

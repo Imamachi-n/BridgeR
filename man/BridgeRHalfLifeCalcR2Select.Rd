@@ -8,11 +8,19 @@ Calculate RNA half-life from BRIC-seq data
 Calculate RNA half-life from BRIC-seq data
 }
 \usage{
-BridgeRHalfLifeCalcR2Select(filename = "BridgeR_4_Normalized_expression_dataset.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, ExceptTimePoint=c(1), OutputFile = "BridgeR_5C_HalfLife_calculation_R2Selection.txt")
+BridgeRHalfLifeCalcR2Select(InputFile = "BridgeR_4_Normalized_expression_dataset_20151118.txt",
+                            group, 
+                            hour, 
+                            InforColumn = 4, 
+                            CutoffDataPointNumber = 4,
+                            CutoffDataPoint1 = c(1,2),
+                            CutoffDataPoint2 = c(8,12),
+                            ThresholdHalfLife = c(8,12),
+                            OutputFile = "BridgeR_5D_HalfLife_calculation_ver4_20151119.txt")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{filename}{
+  \item{InputFile}{
 File path/name
 }
   \item{group}{
@@ -24,14 +32,17 @@ Vector(number)
   \item{InforColumn}{
 Integer
 }
-  \item{CutoffRelExp}{
-Number(Integer or Float)
-}
-  \item{CutoffDataPoint}{
+  \item{CutoffDataPointNumber}{
 Integer
 }
-  \item{ExceptTimePoint}{
-Vector(time_point)
+  \item{CutoffDataPoint1}{
+Vector(Integer)
+}
+  \item{CutoffDataPoint2}{
+Vector(Integer)
+}
+  \item{ThresholdHalfLife}{
+Vector(Integer)
 }
   \item{OutputFile}{
 File path/name
@@ -55,7 +66,7 @@ https://github.com/Naoto-Imamachi/BRIC-seq_data_analysis/tree/master/BridgeR
 Naoto Imamachi
 }
 \note{
-2015-11-12
+2015-11-24
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -69,7 +80,15 @@ Naoto Imamachi
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (filename = "BridgeR_4_Normalized_expression_data.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, ExceptTimePoint=c(1), OutputFile = "BridgeR_5C_HalfLife_calculation_R2Selection.txt") 
+function (InputFile = "BridgeR_4_Normalized_expression_dataset_20151118.txt",
+                            group, 
+                            hour, 
+                            InforColumn = 4, 
+                            CutoffDataPointNumber = 4,
+                            CutoffDataPoint1 = c(1,2),
+                            CutoffDataPoint2 = c(8,12),
+                            ThresholdHalfLife = c(8,12),
+                            OutputFile = "BridgeR_5D_HalfLife_calculation_ver4_20151119.txt")
 {
 }
 }

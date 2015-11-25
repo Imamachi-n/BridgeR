@@ -1,7 +1,7 @@
 Package: BridgeR
 Type: Package
 Title: Comprehensive BRIC-seq data analysis tool
-Version: 0.1
+Version: 0.2
 Date: 2015-11-05
 Author: Naoto Imamachi
 Maintainer: Naoto Imamachi <naoto.imamachi@gmail.com>

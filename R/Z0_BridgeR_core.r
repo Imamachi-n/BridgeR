@@ -3,18 +3,81 @@
 #ver: 1.0.0
 #Date: 2015-11-05
 
-BridgeRCore <- function(InputFiles, InforColumn=4, group, hour, RPKMcutoff=0.1, RelRPKMFig=F, SelectNormFactor=T, CutoffRelExp=0.1, CutoffDataPoint=3, UseOldModel=F){
-    #library(data.table)
-    #library(ggplot2)
-    BridgeRDataSetFromCuffnorm(CuffnormFiles=InputFiles, group=group, hour=hour, cutoff=RPKMcutoff, InforColumn=InforColumn, OutputFile="BridgeR_1_Relative_expression_dataset.txt")
-    BridgeRDatasetChecker(InputFile="BridgeR_1_Relative_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, OutputFile="BridgeR_2_Relative_RPKM_distribution")
-    BridgeRNormalizationFactors(InputFile="BridgeR_1_Relative_expression_dataset.txt",group=group, hour=hour, InforColumn=InforColumn, YMin=-2, YMax=2, MakeFig=RelRPKMFig, figname="BridgeR_3_Normalizaion_factor", nfname="BridgeR_3_Normalizaion_factor")
-    BridgeRNormalization(filename="BridgeR_1_Relative_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, SelectNormFactor=SelectNormFactor, NormFactor="BridgeR_3_Normalizaion_factor", OutputFile="BridgeR_4_Normalized_expression_dataset.txt")
-    BridgeRDatasetChecker(InputFile="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, OutputFile="BridgeR_4B_Normalized_RPKM_distribution")
-    if(UseOldModel == F){
-        BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", group=group, hour=hour, InforColumn=InforColumn, CutoffRelExp=CutoffRelExp, CutoffDataPoint=CutoffDataPoint, OutputFile="BridgeR_5_HalfLife_calculation.txt")
-    }else if(UseOldModel == T){
-        BridgeRHalfLifeCalcModel3(filename = "BridgeR_4_Normalized_expression_dataset.txt", group, hour, InforColumn = 4, CutoffRelExp = 0.1, CutoffDataPoint = 3, OutputFile = "BridgeR_5B_HalfLife_calculation_3model.txt")
+BridgeRCore <- function(InputFiles,
+                        InforColumn=4,
+                        group,
+                        hour,
+                        RPKMcutoff=0.1,
+                        RelRPKMFig=F,
+                        SelectNormFactor=T,
+                        CutoffDataPointNumber = 4,
+                        CutoffDataPoint1 = c(1,2),
+                        CutoffDataPoint2 = c(8,12),
+                        ThresholdHalfLife = c(8,12),
+                        CutoffRelExp=0.1,
+                        ModelMode="R2_selection"
+                        ){
+    BridgeRDataSetFromCuffnorm(CuffnormFiles=InputFiles, 
+                               group=group, 
+                               hour=hour, 
+                               cutoff=RPKMcutoff, 
+                               InforColumn=InforColumn, 
+                               OutputFile="BridgeR_1_Relative_expression_dataset.txt")
+    BridgeRDatasetChecker(InputFile="BridgeR_1_Relative_expression_dataset.txt", 
+                          group=group, 
+                          hour=hour, 
+                          InforColumn=InforColumn, 
+                          OutputFile="BridgeR_2_Relative_RPKM_distribution")
+    BridgeRNormalizationFactors(InputFile="BridgeR_1_Relative_expression_dataset.txt",
+                                group=group, 
+                                hour=hour, 
+                                InforColumn=InforColumn, 
+                                YMin=-2, 
+                                YMax=2, 
+                                MakeFig=RelRPKMFig, 
+                                figname="BridgeR_3_Normalizaion_factor", 
+                                nfname="BridgeR_3_Normalizaion_factor")
+    BridgeRNormalization(filename="BridgeR_1_Relative_expression_dataset.txt", 
+                         group=group, 
+                         hour=hour, 
+                         InforColumn=InforColumn, 
+                         SelectNormFactor=SelectNormFactor, 
+                         NormFactor="BridgeR_3_Normalizaion_factor", 
+                         OutputFile="BridgeR_4_Normalized_expression_dataset.txt")
+    BridgeRDatasetChecker(InputFile="BridgeR_4_Normalized_expression_dataset.txt", 
+                          group=group, 
+                          hour=hour, 
+                          InforColumn=InforColumn, 
+                          OutputFile="BridgeR_4B_Normalized_RPKM_distribution")
+    if(ModelMode == "Raw_model"){
+        BridgeRHalfLifeCalculation(filename="BridgeR_4_Normalized_expression_dataset.txt", 
+                                   group=group, 
+                                   hour=hour, 
+                                   InforColumn=InforColumn, 
+                                   CutoffRelExp=CutoffRelExp, 
+                                   CutoffDataPoint=CutoffDataPointNumber, 
+                                   OutputFile="BridgeR_5_HalfLife_calculation.txt")
+    }else if(ModelMode == "Three_model"){
+        BridgeRHalfLifeCalcModel3(filename = "BridgeR_4_Normalized_expression_dataset.txt", 
+                                  group = group, 
+                                  hour = hour, 
+                                  InforColumn = InforColumn, 
+                                  CutoffRelExp = CutoffRelExp, 
+                                  CutoffDataPoint = CutoffDataPointNumber, 
+                                  OutputFile = "BridgeR_5B_HalfLife_calculation_3model.txt")
+    }else if(ModelMode == "R2_selection"){
+        BridgeRHalfLifeCalcR2Select(InputFile = "BridgeR_4_Normalized_expression_dataset.txt",
+                                    group = group, 
+                                    hour = hour, 
+                                    InforColumn = InforColumn, 
+                                    CutoffDataPointNumber = CutoffDataPointNumber,
+                                    CutoffDataPoint1 = CutoffDataPoint1,
+                                    CutoffDataPoint2 = CutoffDataPoint2,
+                                    ThresholdHalfLife = ThresholdHalfLife,
+                                    OutputFile = "BridgeR_5C_HalfLife_calculation_R2_selection.txt")
+    }else{
+        print("ERROR: Defined wrong ModelMode...")
+        print("Choose the following ModelMode: Raw_model, Three_model, R2_selection.")
     }
 }
 

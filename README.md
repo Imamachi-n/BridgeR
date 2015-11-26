@@ -33,14 +33,24 @@ hour <- c(0,1,2,4,8,12)
 group <- c("Control","Knockdown")
 
 BridgeRCore(InputFiles=files,
+            InforColumn=4,
             group=group,
             hour=hour,
-            RelRPKMFig=T)
+            SelectNormFactor=T,
+            CutoffDataPointNumber = 4,
+            CutoffDataPoint1 = c(1,2),
+            CutoffDataPoint2 = c(8,12),
+            ThresholdHalfLife = c(8,12),
+            ModelMode="R2_selection")
 
 BridgeRCompare(InputFile="BridgeR_5_HalfLife_calculation.txt",
+               InforColumn=4,
                group=group,
                hour=hour,
-               ComparisonFile=group)
+               ComparisonFile=group,
+               CutoffDataPointNumber = 4,
+               ModelMode="R2_selection",
+               Calibration=F)
 ```
 (2) Draw RNA decay curve predicted from your BRIC-seq dataset.
 ```
@@ -57,5 +67,10 @@ BridgeReport6P(filename1=RPKM_ctrl,
                filename3=Normalized_data,
                group=group,
                hour=hour, 
-               ComparisonFile=group)
+               ComparisonFile=group,
+               SearchRow = "symbol",
+               InforColumn = 4,
+               Color = c("black","red"),
+               CutoffDataPoint1 = c(1,2),
+               CutoffDataPoint2 = c(8,12))
 ```

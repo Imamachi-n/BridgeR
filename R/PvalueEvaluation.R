@@ -58,8 +58,8 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
     if(Calibration == T){
         colnames(halflife_table) <- c("x","y")
         test_lm <- lm(y ~ x + 0, data=as.data.frame(halflife_table))
-        correction_value <- as.numeric(test_lm$coefficients)
-        print("Correction value: ", correction_value)
+        correction_value <- round(as.numeric(test_lm$coefficients),digits=3)
+        print(paste("Correction value: ",correction_value, sep=""))
     }
     
     ###Calc_p-value###
@@ -83,9 +83,9 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
                     
                     if(Calibration == T){
                         if(flg == 1){
-                            halflife_w <- halflife/correction_value
-                            halflife <- halflife/correction_value
-                            halflife_value <- -coef*halflife
+                            half_life_w <- half_life/correction_value
+                            half_life <- half_life/correction_value
+                            halflife_value <- -coef*half_life
                         }
                     }
                     

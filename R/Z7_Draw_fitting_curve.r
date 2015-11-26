@@ -3,6 +3,196 @@
 #ver: 1.0.0
 #Date: 2015-10-08
 
+BridgeRDraw <- function(InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
+                        group,
+                        hour,
+                        ComparisonFile,
+                        CutoffRelExp = 0,
+                        CutoffDataPoint = 4,
+                        InforColumn = 4,
+                        GeneInfor = 2,
+                        OutputDir = "BridgeRDraw_fig",
+                        ModelMode = "R2_selection",
+                        DrawMode = "Simple",
+                        Color = c("black","red")){
+    ###Check_ModelMode & DrawMode###
+    if(ModelMode == "Raw_model" || ModelMode == "Three_model" || ModelMode == "R2_selection"){
+        if(DrawMode == "Simple" || DrawMode == "Ribbon"){
+            ###Make_stored_directory###
+            ComparisonFile_name <- paste(ComparisonFile, collapse = "_")
+            output_dir_name <- paste(OutputDir, ComparisonFile_name, sep="_")
+            dir.create(output_dir_name)
+            
+            ###Prepare_file_infor###
+            time_points <- length(hour)
+            group_number <- length(group)
+            input_file <- fread(InputFile, header = T)
+            comp_file_number <- NULL
+            for(a in 1:length(ComparisonFile)){
+                comp_file_number <- append(comp_file_number, which(group == ComparisonFile[a])) #1,2,3 => 1,2 || 1,3
+            }
+            
+            ###Draw_fitting_curve###
+            gene_number <- length(input_file[[1]])
+            for(x in 1:gene_number){
+                data <- as.vector(as.matrix(input_file[x,]))
+                
+                #Save_fig
+                gene_name <- as.character(data[GeneInfor])
+                file_name <- sprintf("%1$s.png",gene_name)
+                file_name <- paste(output_dir_name, "/", file_name, sep="")
+                png(filename = file_name, width=640, height=640)
+                
+                #Prepare_ggplot2
+                p <- ggplot()
+                
+                flg <- 0
+                fig_color <- NULL
+                for(a in comp_file_number){
+                    #Select_color
+                    if(flg == 0){
+                        fig_color <- Color[1]
+                    }else if(flg == 1){
+                        fig_color <- Color[2]
+                    }
+                    
+                    infor_st <- NULL
+                    infor_ed <- NULL
+                    model_name <- NULL
+                    if(ModelMode == "Raw_model" || ModelMode == "R2_selection"){
+                        infor_st <- 1 + (a - 1)*(time_points + InforColumn + 3)
+                        infor_ed <- (InforColumn)*a + (a - 1)*(time_points + 3)
+                    }else if(ModelMode == "Three_model"){
+                        infor_st <- 1 + (a - 1)*(time_points + InforColumn + 23)
+                        infor_ed <- (InforColumn)*a + (a - 1)*(time_points + 23)
+                        model_index <- infor_ed + 21
+                        model_name <- data[model_index]
+                    }
+                    exp_st <- infor_ed + 1
+                    exp_ed <- infor_ed + time_points
+                    
+                    exp_data <- as.numeric(data[exp_st:exp_ed])
+                    time_point_exp_original <- data.frame(hour=hour, exp=exp_data)
+                    
+                    #Draw_time_points
+                    p <- p + layer(data = time_point_exp_original,
+                                   mapping = aes(x = hour, y = exp),
+                                   geom="point",
+                                   size = 4,
+                                   shape = 19,
+                                   colour = fig_color)
+                    
+                    #Remove_exp0_data
+                    time_point_exp <- time_point_exp_original[time_point_exp_original$exp > CutoffRelExp,]
+                    data_point <- length(time_point_exp$exp)
+                    
+                    #Draw_fitting_curve
+                    if(!is.null(time_point_exp)){
+                        if(data_point >= CutoffDataPoint){
+                            if(ModelMode == "Raw_model" || ModelMode == "R2_selection"){
+                                model <- lm(log(time_point_exp$exp) ~ time_point_exp$hour - 1)
+                                fig_data <- data.frame(hour=time_point_exp$hour)
+                                predicted <- as.numeric(as.vector(as.matrix(predict(model, fig_data))))
+                                fig_data$exp <- exp(as.vector(as.matrix(predicted)))
+                                
+                                p <- p + layer(data=fig_data,
+                                               mapping=(aes(x=hour, y=exp)),
+                                               geom="line",
+                                               size=1.2,
+                                               colour=fig_color)
+                                
+                            }else if(ModelMode == "Three_model"){
+                                if(!is.na(model_name) || model_name != "no_good_model" || 
+                                   model_name != "few_data" || model_name != "low_expresion"){
+                                    #Parameter_setting
+                                    a_1_index <- exp_ed + 4
+                                    a_2_index <- exp_ed + 10
+                                    b_2_index <- exp_ed + 11
+                                    a_3_index <- exp_ed + 16
+                                    b_3_index <- exp_ed + 17
+                                    c_3_index <- exp_ed + 18
+                                    model_index <- exp_ed + 21
+                                    model <- data[model_index]
+                                    
+                                    #model_curve
+                                    if(flg == 0){
+                                        model_curve_1 <- NULL
+                                        a_1_1 <- as.numeric(data[a_1_index])
+                                        a_2_1 <- as.numeric(data[a_2_index])
+                                        b_2_1 <- as.numeric(data[b_2_index])
+                                        a_3_1 <- as.numeric(data[a_3_index])
+                                        b_3_1 <- as.numeric(data[b_3_index])
+                                        c_3_1 <- as.numeric(data[c_3_index])                    
+                                        if(model == "model1"){
+                                            model_curve_1 <- function(t){exp(-a_1_1 * t)}
+                                        }else if(model == "model2"){
+                                            model_curve_1 <- function(t){(1.0 - b_2_1) * exp(-a_2_1 * t) + b_2_1}
+                                        }else if(model == "model3"){
+                                            model_curve_1 <- function(t){(c_3_1) * exp(-a_3_1 * t) + (1.0 - c_3_1) * exp(-b_3_1 * t)}
+                                        }
+                                        p <- p + layer(geom="path",
+                                                       stat="function",
+                                                       fun=model_curve_1,
+                                                       mapping=aes(color="model_curve_1"),
+                                                       size=1.2)
+                                    }else if(flg == 1){
+                                        model_curve_2 <- NULL
+                                        a_1_2 <- as.numeric(data[a_1_index])
+                                        a_2_2 <- as.numeric(data[a_2_index])
+                                        b_2_2 <- as.numeric(data[b_2_index])
+                                        a_3_2 <- as.numeric(data[a_3_index])
+                                        b_3_2 <- as.numeric(data[b_3_index])
+                                        c_3_2 <- as.numeric(data[c_3_index])
+                                        if(model == "model1"){
+                                            model_curve_2 <- function(t){exp(-a_1_2 * t)}
+                                        }else if(model == "model2"){
+                                            model_curve_2 <- function(t){(1.0 - b_2_2) * exp(-a_2_2 * t) + b_2_2}
+                                        }else if(model == "model3"){
+                                            model_curve_2 <- function(t){(c_3_2) * exp(-a_3_2 * t) + (1.0 - c_3_2) * exp(-b_3_2 * t)}
+                                        }
+                                        p <- p + layer(geom="path",
+                                                       stat="function",
+                                                       fun=model_curve_2,
+                                                       mapping=aes(color="model_curve_2"),
+                                                       size=1.2)
+                                    }
+                                }else{ #!is.na(model_name) || model_name != "no_good_model" || model_name != "few_data" || model_name != "low_expresion"
+                                }
+                            } #ModelMode: Raw_model, R2_selection, Three_model
+                        }else{ #data_point >= CutoffDataPoint
+                        }
+                    }else{ #!is.null(time_point_exp)
+                    }
+                    flg <- 1
+                } #a in comp_file_number
+                
+                if(ModelMode == "Three_model"){
+                    p <- p + scale_colour_manual(name="Sample",
+                                                 values=c("model_curve_1"="black","model_curve_2"="red"),
+                                                 labels=ComparisonFile)
+                }
+                
+                p <- p + ggtitle(gene_name)
+                p <- p + xlab("Time")
+                p <- p + ylab("Relative RPKM (Time0 = 1)")
+                p <- p + xlim(0,12)
+                ybreaks <- seq(0,10,0.1)[2:101]
+                p <- p + scale_y_log10(breaks=ybreaks,labels=ybreaks)
+                plot(p)
+                
+                dev.off() #close_fig
+                plot.new()
+            }
+        }else{
+            return(print("ERROR: Defined wrong DrawMode. Choose the following DrawMode: Simple, Ribbon. You cannot choose Ribbon mode
+                         if you use Three_model ModelMode."))
+        }
+    }else{
+        return(print("ERROR: Defined wrong ModelMode. Choose the following ModelMode: Raw_model, Three_model, R2_selection"))
+    }
+}
+
+
 ###Draw_fitting_curve_function###
 BridgeRSimpleDraw <- function(filename="BridgeR_4_Normalized_expression_dataset.txt", group, hour, ComparisonFile, CutoffRelExp = 0.1, CutoffDataPoint = 3, InforColumn = 4, OutputDir = "BridgeR_simple_fig"){
     ###Make_stored_directory###

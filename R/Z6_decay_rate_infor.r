@@ -67,11 +67,16 @@ BridgeRHalfLifeComparison <- function(filename = "BridgeR_5C_HalfLife_calculatio
         if(ModelMode == "Raw_model" || ModelMode == "R2_selection"){
             Pvalue <- as.numeric(as.vector(as.matrix(input_file[x, 48, with=F])))
             div <- as.numeric(as.vector(as.matrix(input_file[x, 47, with=F])))
+            if(is.na(half_1[x]) || is.na(half_2[x]) || is.nan(Pvalue)){
+                next
+            }
+        }else if(ModelMode == "Three_model"){
+            if(is.na(half_1[x]) || is.na(half_2[x])){
+                next
+            }
         }
         
-        if(is.na(half_1[x]) || is.na(half_2[x]) || is.nan(Pvalue)){
-            next
-        }
+        
         half_1_fig <- append(half_1_fig, half_1[x])
         half_2_fig <- append(half_2_fig, half_2[x])
         div <- half_2[x]/half_1[x] # KD/Control

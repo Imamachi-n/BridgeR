@@ -177,7 +177,7 @@ BridgeRHalfLifeCalc <- function(InputFiles = "BridgeR_4_Normalized_expression_da
                                    InforColumn=InforColumn, 
                                    CutoffRelExp=CutoffRelExp, 
                                    CutoffDataPoint=CutoffDataPointNumber, 
-                                   OutputFile="BridgeR_5_HalfLife_calculation.txt")
+                                   OutputFile="BridgeR_5_HalfLife_calculation_Raw.txt")
     }else if(ModelMode == "Three_model"){
         BridgeRHalfLifeCalcModel3(filename = InputFiles, 
                                   group = group, 
@@ -252,7 +252,7 @@ BridgeRCompare <- function(InputFile="BridgeR_5C_HalfLife_calculation_R2_selecti
                       group = group, 
                       hour = hour, 
                       ComparisonFile = ComparisonFile,
-                      ModelMode="R2_selection")
+                      ModelMode=ModelMode)
 }
 
 BridgeRCompareFig <- function(InputFile="BridgeR_6_HalfLife_Pvalue_estimation.txt",

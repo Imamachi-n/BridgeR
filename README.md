@@ -43,7 +43,7 @@ BridgeRCore(InputFiles=files,
             ThresholdHalfLife = c(8,12),
             ModelMode="R2_selection")
 
-BridgeRCompare(InputFile="BridgeR_5_HalfLife_calculation.txt",
+BridgeRCompare(InputFile="BridgeR_5C_HalfLife_calculation_R2_selection.txt",
                InforColumn=4,
                group=group,
                hour=hour,
@@ -58,7 +58,7 @@ library(BridgeR)
 
 RPKM_ctrl <- "Control.fpkm_table"
 RPKM_kd <- "Knockdown.fpkm_table"
-Normalized_data <- "BridgeR_4_Normalized_expression_dataset.txt"
+Normalized_data <- "BridgeR_5C_HalfLife_calculation_R2_selection.txt"
 group <- c("Control","Knockdown")
 hour <- c(0,1,2,4,8,12)
 

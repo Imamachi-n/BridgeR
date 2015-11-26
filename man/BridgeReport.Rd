@@ -8,14 +8,17 @@ Draw fitting decay curve for BRIC-seq data
 Draw fitting decay curve for BRIC-seq data
 }
 \usage{
-BridgeReport(filename1="siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
-             filename2="siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
-             filename3="BridgeR_4_Normalized_expression_dataset.txt",
-             group,
-             hour,
-             ComparisonFile,
-             SearchRow="symbol",
-             InforColumn=4)
+BridgeReport(filename1 = "siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+                         filename2 = "siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+                         filename3 = "BridgeR_5C_HalfLife_calculation_R2_selection.txt",
+                         group,
+                         hour,
+                         ComparisonFile,
+                         SearchRow = "symbol",
+                         InforColumn = 4,
+                         Color = c("black","red"),
+                         CutoffDataPoint1 = c(1,2),
+                         CutoffDataPoint2 = c(8,12))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,6 +46,15 @@ String(header)
   \item{InforColumn}{
 Integer
 }
+  \item{Color}{
+vector(color name)
+}
+  \item{CutoffDataPoint1}{
+vector(Integer or float)
+}
+  \item{CutoffDataPoint2}{
+vector(Integer or float)
+}
 }
 \details{
 Draw fitting decay curve for BRIC-seq data
@@ -62,7 +74,7 @@ https://github.com/Naoto-Imamachi/BRIC-seq_data_analysis/tree/master/BridgeR
 Naoto Imamachi
 }
 \note{
-2015-11-16
+2015-11-26
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -76,14 +88,17 @@ Naoto Imamachi
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (filename1="siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
-             filename2="siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
-             filename3="BridgeR_4_Normalized_expression_dataset.txt",
-             group,
-             hour,
-             ComparisonFile,
-             SearchRow="symbol",
-             InforColumn=4)
+function (filename1 = "siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+                         filename2 = "siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+                         filename3 = "BridgeR_5C_HalfLife_calculation_R2_selection.txt",
+                         group,
+                         hour,
+                         ComparisonFile,
+                         SearchRow = "symbol",
+                         InforColumn = 4,
+                         Color = c("black","red"),
+                         CutoffDataPoint1 = c(1,2),
+                         CutoffDataPoint2 = c(8,12))
 {
 }
 }

@@ -3,14 +3,17 @@
 #ver: 1.0.0
 #Date: 2015-11-18
 
-BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
-                         filename2="siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
-                         filename3="BridgeR_4_Normalized_expression_dataset.txt",
+BridgeReport <- function(filename1 = "siStealth_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+                         filename2 = "siPUM1_compatible_genes_RefSeq_result_mRNA.fpkm_table",
+                         filename3 = "BridgeR_5C_HalfLife_calculation_R2_selection.txt",
                          group,
                          hour,
                          ComparisonFile,
-                         SearchRow="symbol",
-                         InforColumn=4)
+                         SearchRow = "symbol",
+                         InforColumn = 4,
+                         Color = c("black","red"),
+                         CutoffDataPoint1 = c(1,2),
+                         CutoffDataPoint2 = c(8,12))
 {
     time_points <- length(hour) 
     group_number <- length(group)
@@ -32,11 +35,66 @@ BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRN
     setkeyv(rpkm_file1,SearchRow)
     setkeyv(rpkm_file2,SearchRow)
     
+    ###Prepare_except_time_point###
+    CutoffDataPoint1 <- sort(CutoffDataPoint1, decreasing = T)
+    CutoffDataPoint2 <- sort(CutoffDataPoint2, decreasing = F)
+
+    delete_times_list <- function(test_times){
+        times_length <- length(test_times)
+        times_index <- c(times_length)
+        add_index <- times_length
+        label_list <- NULL
+        
+        for(counter in times_length:1){
+            if(length(times_index) != 1){
+                check_times <- test_times[times_index]
+                del_label <- paste("Delete ",paste(check_times,collapse = "-"),"hr",sep="")
+                label_list <- append(label_list, del_label)
+            }
+
+            #Counter
+            add_index <- add_index - 1
+            times_index <- append(times_index, add_index)
+        }
+        return(label_list)
+    }
+    
+    label_list0 <- c("Raw")
+    label_list1 <- delete_times_list(CutoffDataPoint1)
+    label_list2 <- delete_times_list(CutoffDataPoint2)
+    label_list3 <- NULL
+    
+    label_name <- paste("Delete ",hour[-1],"hr",sep="")
+    label_list3 <- append(label_list3, label_name)
+
+    label_list_all <- c(label_list0, label_list1, label_list2, label_list3)
+    select_list <- NULL
+    for(x in 1:length(label_list_all)){
+        select_list <- append(select_list,list(x))
+    }
+    names(select_list) <- label_list_all
+
+    ###Function1###
+    select_exp_data <- function(time_point_exp, input_select_id){
+        time_point_exp_for_test <- time_point_exp
+        select_name <- names(select_list[as.numeric(input_select_id)]) #Raw, Delete 1h-2h...
+        if(select_name == "Raw"){
+        }else{
+            select_name <- gsub("Delete ", "", select_name)
+            select_name <- gsub("hr", "", select_name)
+            select_name <- as.numeric(as.vector(strsplit(select_name, "-")[[1]]))
+            for(i in select_name){
+                time_point_exp_for_test <- time_point_exp_for_test[time_point_exp_for_test$hour != i,]
+            }
+        }
+        return(time_point_exp_for_test)
+    }
+    
     rpkm_exp_st <- InforColumn + 1
     rpkm_exp_ed <- InforColumn + time_points
     
     ui <- fluidPage(
-        titlePanel("BridgeReport ver 0.1.0"),
+        titlePanel("BridgeReport ver 0.2.0"),
         
         sidebarLayout(
             position="left",
@@ -51,19 +109,10 @@ BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRN
                 sliderInput("range_y", 
                             label = "Y-axis(Relative RNA remaining):",
                             min = 0.001, max = 10, value = c(0.1,1.5)),
-                selectInput("select", label = "Select decay curve calculation method", 
-                            choices = list("Raw" = 1,
-                                           "Except 1hr" = 2,
-                                           "Except 1-2hr" = 3,
-                                           "Except 2hr" = 4,
-                                           "Except 4hr" = 5,
-                                           "Except 8hr" = 6,
-                                           "Except 12hr" = 7,
-                                           "Except 8-12hr" = 8,
-                                           "Except 1,12hr" = 9,
-                                           "Cutoff>=0.1" = 10,
-                                           "Cutoff>=0.05" = 11,
-                                           "Cutoff>=0.01" = 12), selected = 1)
+                selectInput("select1", label = paste(ComparisonFile[1]," (Select time points)",sep=""), 
+                            choices = select_list, selected = 1),
+                selectInput("select2", label = paste(ComparisonFile[2]," (Select time points)",sep=""), 
+                            choices = select_list, selected = 1)
             ),
             
             mainPanel(
@@ -88,10 +137,11 @@ BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRN
     server <- function(input, output) {
         r_squared_list <- NULL
         half_life_list <- NULL
+        model_list <- NULL
         
         output$plot1 <- renderPlot({
             data <- as.vector(as.matrix(input_file[input$text]))
-            gene_name <- as.character(data[2])
+            gene_name <- as.character(input$text)
             
             ###Prepare_ggplot2###
             p <- ggplot()
@@ -100,16 +150,19 @@ BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRN
             fig_color <- NULL
             for(a in comp_file_number){
                 if(flg == 0){
-                    fig_color <- "black"
-                }else{
-                    fig_color <- "red"
+                    fig_color <- Color[1]
+                }else if(flg == 1){
+                    fig_color <- Color[2]
                 }
-                infor_st <- 1 + (a - 1)*(time_points + InforColumn)
-                infor_ed <- (InforColumn)*a + (a - 1)*(time_points)
+                infor_st <- 1 + (a - 1)*(time_points + InforColumn + 3)
+                infor_ed <- (InforColumn)*a + (a - 1)*(time_points + 3)
                 exp_st <- infor_ed + 1
                 exp_ed <- infor_ed + time_points
+                model_index <- infor_ed + time_points + 1
                 
                 exp <- as.numeric(data[exp_st:exp_ed])
+                model_name <- as.character(data[model_index])
+                model_list <- append(model_list, model_name)
                 time_point_exp_original <- data.frame(hour,exp)
                 
                 # For storing which rows have been excluded
@@ -118,47 +171,25 @@ BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRN
                 #)
                 
                 time_point_exp <- time_point_exp_original[time_point_exp_original$exp > 0, ]
-                if(input$select == 1){
-                    
-                }else if(input$select == 2){
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=1,]
-                }else if(input$select == 3){
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=1,]
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=2,]
-                }else if(input$select == 4){
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=2,]
-                }else if(input$select == 5){
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=4,]
-                }else if(input$select == 6){
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=8,]
-                }else if(input$select == 7){
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=12,]
-                }else if(input$select == 8){
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=12,]
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=8,]
-                }else if(input$select == 9){
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=1,]
-                    time_point_exp <- time_point_exp[time_point_exp$hour!=12,]
-                }else if(input$select == 10){
-                    time_point_exp <- time_point_exp[time_point_exp$exp >= 0.1, ]
-                }else if(input$select == 11){
-                    time_point_exp <- time_point_exp[time_point_exp$exp >= 0.05, ]
-                }else if(input$select == 12){
-                    time_point_exp <- time_point_exp[time_point_exp$exp >= 0.01, ]
-                }
                 
-                p <- p + layer(data=time_point_exp, 
+                if(flg == 0){
+                    time_point_exp_for_test <- select_exp_data(time_point_exp, input$select1)
+                }else if(flg == 1){
+                    time_point_exp_for_test <- select_exp_data(time_point_exp, input$select2)
+                }
+
+                p <- p + layer(data=time_point_exp_for_test, 
                                mapping=aes(x=hour, y=exp), 
                                geom="point",
                                size=4,
                                shape=19,
                                colour=fig_color)
                 
-                data_point <- length(time_point_exp$exp)
-                if(!is.null(time_point_exp)){
+                data_point <- length(time_point_exp_for_test$exp)
+                if(!is.null(time_point_exp_for_test)){
                     if(data_point >= 3){
-                        if(as.numeric(as.vector(as.matrix(time_point_exp$exp[1]))) > 0){
-                            model <- lm(log(time_point_exp$exp) ~ time_point_exp$hour - 1)
+                        if(as.numeric(as.vector(as.matrix(time_point_exp_for_test$exp[1]))) > 0){
+                            model <- lm(log(time_point_exp_for_test$exp) ~ time_point_exp_for_test$hour - 1)
                             model_summary <- summary(model)
                             coef <- -model_summary$coefficients[1]
                             half_life <- log(2)/coef
@@ -171,7 +202,7 @@ BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRN
                             half_life_list <- append(half_life_list,half_life)
                             r_squared_list <- append(r_squared_list,r_squared)
                             
-                            fig_data <- data.frame(hour=time_point_exp$hour)
+                            fig_data <- data.frame(hour=time_point_exp_for_test$hour)
                             predicted <- as.numeric(as.vector(as.matrix(predict(model, fig_data))))
                             fig_data$exp <- exp(as.vector(as.matrix(predicted)))
                             p <- p + layer(data=fig_data,
@@ -207,12 +238,12 @@ BridgeReport <- function(filename1="siStealth_compatible_genes_RefSeq_result_mRN
                 table_data <- data.frame(R2=c("NA","NA"), HalfLife=c("NA","NA"))
             }else{
                 
-                rpkm_data1 <- round(as.numeric(as.vector(as.matrix(rpkm_file1[input$text]))[rpkm_exp_st:rpkm_exp_ed]),digits=3)
-                rpkm_data2 <- round(as.numeric(as.vector(as.matrix(rpkm_file2[input$text]))[rpkm_exp_st:rpkm_exp_ed]),digits=3)
-                table_data <- data.frame(R2=r_squared_list, HalfLife=half_life_list)
+                rpkm_data1 <- as.character(round(as.numeric(as.vector(as.matrix(rpkm_file1[input$text]))[rpkm_exp_st:rpkm_exp_ed]),digits=3))
+                rpkm_data2 <- as.character(round(as.numeric(as.vector(as.matrix(rpkm_file2[input$text]))[rpkm_exp_st:rpkm_exp_ed]),digits=3))
+                table_data <- data.frame(R2=as.character(r_squared_list), HalfLife=as.character(half_life_list), model=model_list)
                 table_data <- cbind(table_data,rbind(rpkm_data1,rpkm_data2))
-                colnames(table_data) <- c("R2","Half-life",table_header)
-                rownames(table_data) <- ComparisonFile
+                colnames(table_data) <- c("R2","Half-life","Model",table_header)
+                rownames(table_data) <- as.character(ComparisonFile)
             }
             
             output$mytable1 = renderTable({

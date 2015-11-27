@@ -46,15 +46,16 @@ BridgeRNormalizationFactorsHK <- function(InputFile, group, hour, InforColumn = 
         }
         
         nf <- NULL
-        for(x in 1:length(HKGenes_raw_data)){
+        for(x in 1:length(HKgenes_infor_index)){
             if(x == 1){
                 nf <- as.numeric(as.vector(as.matrix(HKGenes_raw_data[x,])))
             }else{
                 nf <- as.numeric(HKGenes_raw_data[x,]) * nf
             }
         }
-        nf <- nf^(1/length(HKGenes))
         
+        nf <- nf^(1/length(HKGenes))
+
         cat(group[a],nf, sep="\t", file=OutputFile, append=T)
         cat("\n", file=OutputFile, append=T)
 

@@ -62,7 +62,7 @@ Normalized_data <- "BridgeR_5C_HalfLife_calculation_R2_selection.txt"
 group <- c("Control","Knockdown")
 hour <- c(0,1,2,4,8,12)
 
-BridgeReport6P(filename1=RPKM_ctrl,
+BridgeReport(filename1=RPKM_ctrl,
                filename2=RPKM_kd,
                filename3=Normalized_data,
                group=group,

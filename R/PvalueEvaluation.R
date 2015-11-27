@@ -57,7 +57,10 @@ BridgeRPvalueEvaluation <- function(InputFile="BridgeR_5C_HalfLife_calculation_R
     
     if(Calibration == T){
         colnames(halflife_table) <- c("x","y")
-        test_lm <- lm(y ~ x + 0, data=as.data.frame(halflife_table))
+        halflife_table <- as.data.frame(halflife_table)
+        halflife_table <- halflife_table[halflife_table$x < 24,]
+        halflife_table <- halflife_table[halflife_table$y < 24,]
+        test_lm <- lm(y ~ x + 0, data=halflife_table)
         correction_value <- round(as.numeric(test_lm$coefficients),digits=3)
         print(paste("Correction value: ",correction_value, sep=""))
     }

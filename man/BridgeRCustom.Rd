@@ -9,22 +9,26 @@ RNA half-life for each gene is calculated using your custom normalization factor
 }
 \usage{
 BridgeRCustom(YourNormFactor, 
-                          InputFiles, 
-                          InforColumn=4, 
-                          group, 
-                          hour, 
-                          RPKMcutoff=0.1,
-                          CutoffDataPointNumber = 4,
-                          CutoffDataPoint1 = c(1,2),
-                          CutoffDataPoint2 = c(8,12),
-                          ThresholdHalfLife = c(8,12),
-                          CutoffRelExp=0.001,
-                          ModelMode="R2_selection")
+              SelectNormFactor=F,
+              InputFiles, 
+              InforColumn=4,
+              group, 
+              hour, 
+              RPKMcutoff=0.1,
+              CutoffDataPointNumber = 4,
+              CutoffDataPoint1 = c(1,2),
+              CutoffDataPoint2 = c(8,12),
+              ThresholdHalfLife = c(8,12),
+              CutoffRelExp=0.001,
+              ModelMode="R2_selection")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{YourNormFactor}{
 File pass: tab-delimited text about normalization factor for each sample
+}
+  \item{SelectNormFactor}{
+Bool(True or False)
 }
   \item{InputFiles}{
 Vector
@@ -102,6 +106,7 @@ Naoto Imamachi
 ## The function is currently defined as
 function (YourNormFactor, 
                           InputFiles, 
+                          SelectNormFactor=F,
                           InforColumn=4, 
                           group, 
                           hour, 

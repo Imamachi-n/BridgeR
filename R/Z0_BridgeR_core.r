@@ -115,6 +115,7 @@ BridgeRHKGenes <- function(InputFiles,
 }
 
 BridgeRCustom <- function(YourNormFactor, 
+                          SelectNormFactor=F,
                           InputFiles, 
                           InforColumn=4, 
                           group, 
@@ -137,12 +138,22 @@ BridgeRCustom <- function(YourNormFactor,
                           hour=hour, 
                           InforColumn=InforColumn, 
                           OutputFile="BridgeR_2_Relative_RPKM_distribution")
-    BridgeRNormalizationForLuc2(filename="BridgeR_1_Relative_expression_dataset.txt", 
-                                group=group, 
-                                hour=hour, 
-                                InforColumn=InforColumn, 
-                                NormFactor=YourNormFactor, 
-                                OutputFile="BridgeR_4_Normalized_expression_dataset.txt")
+    if(SelectNormFactor == F){
+        BridgeRNormalizationForLuc2(filename="BridgeR_1_Relative_expression_dataset.txt", 
+                                    group=group, 
+                                    hour=hour, 
+                                    InforColumn=InforColumn, 
+                                    NormFactor=YourNormFactor, 
+                                    OutputFile="BridgeR_4_Normalized_expression_dataset.txt")
+    }else if(SelectNormFactor == T){
+        BridgeRNormalization(filename="BridgeR_1_Relative_expression_dataset.txt", 
+                             group=group, 
+                             hour=hour, 
+                             InforColumn=InforColumn, 
+                             SelectNormFactor=SelectNormFactor, 
+                             NormFactor="BridgeR_3_Normalizaion_factor", 
+                             OutputFile="BridgeR_4_Normalized_expression_dataset.txt")
+    }
     BridgeRDatasetChecker(InputFile="BridgeR_4_Normalized_expression_dataset.txt", 
                           group=group, 
                           hour=hour, 

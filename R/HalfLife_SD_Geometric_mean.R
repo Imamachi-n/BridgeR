@@ -54,6 +54,37 @@ BridgeRHalfSD <- function(HalflifeFiles = c("BridgeR_6_HalfLife_Pvalue_estimatio
     Half_data_table <- as.data.frame(Half_data_table)
     RPKM_data_table <- as.data.frame(RPKM_data_table)
     
+    ###Half_variance_distribution###
+    Half_variance <- NULL
+    for(x in 1:length(Half_data_table[,1])){
+        half_data <- as.numeric(as.vector(as.matrix(Half_data_table[x,])))
+        half_data <- half_data[!is.na(half_data)]
+        if(length(half_data) == 0){
+        }else{
+            half_data <- half_data - mean(half_data)
+        }
+        Half_variance <- append(Half_variance, half_data)
+    }
+    
+    Half_variance_table <- as.data.frame(Half_variance)
+    ###Fig_data: RPKM(mean) vs Half-life(SD)###
+    png(filename="Histgram_HalfLife_variance.png",width = 600, height = 600)
+    
+    p <- ggplot()
+    p <- p + layer(data = Half_variance_table,
+                   mapping = aes(x=Half_variance),
+                   geom = "bar",
+                   geom_params = list(fill = "steelblue", color = "white"),
+                   stat = "bin",
+                   stat_params = list(binwidth = 0.1))
+    #p <- p + xlab("RPKM mean") + ylab("Half-life SD")
+    p <- p + xlim(-5,5)
+    plot(p)
+    
+    dev.off() #close_fig
+    plot.new()
+    
+    
     ####Calc_mean & SD function###
     test_func <- function(table){
         list(means=mean(table,na.rm = T), sds=sd(table,na.rm = T))

@@ -28,7 +28,16 @@ BridgeRHalfSDGrubbsTest <- function(HalfLifeFile = "HalfLife_RPKM_mean_SD.txt",
     
     input_file_all_half <- cbind(input_file_CTRL_half, input_file_KD_half)
     
-    cat("",file=OutputFile,sep="")
+    header1 <- paste("HalfLife_",NormNames,sep="")
+    header2 <- paste("HalfLife_",CompName,sep="")
+    header3 <- c("P-value(Grubbs test)","Status")
+    
+    cat(header1, file=OutputFile, sep="\t")
+    cat("\t", file=OutputFile, append=T)
+    cat(header2, file=OutputFile, sep="\t", append=T)
+    cat("\t", file=OutputFile, sep="\t", append=T)
+    cat(header3, file=OutputFile, sep="\t", append=T)
+    cat("\n", file=OutputFile, sep="\t", append=T)
     
     for(x in 1:length(input_file_all_half[[1]])){
         half_list <- as.numeric(as.vector(as.matrix(input_file_all_half[x,])))
@@ -73,5 +82,5 @@ BridgeRHalfSDGrubbsTest <- function(HalfLifeFile = "HalfLife_RPKM_mean_SD.txt",
 }
 
 ###TEST###
-#setwd("C:/Users/Naoto/Documents/github/test_R_libraries/BridgeR_test/2015-11-30_PUM1_study_CTRL_comparison/test")
-#BridgeRHalfSDGrubbsTest()
+setwd("C:/Users/Naoto/Documents/github/test_R_libraries/BridgeR_test/2015-11-30_PUM1_study_CTRL_comparison/test")
+BridgeRHalfSDGrubbsTest()

@@ -15,6 +15,21 @@ BridgeReport <- function(filename1 = "siStealth_compatible_genes_RefSeq_result_m
                          CutoffDataPoint1 = c(1,2),
                          CutoffDataPoint2 = c(8,12))
 {
+    ###Error_Check###
+    if(length(ComparisonFile) != 2){
+        error_massage <- paste('Error: The number of "ComparisonFile" is not 2.',
+                               'Input 2 file names such as c("Control","Knockdown")',
+                               sep="\n")
+        return(print(error_massage))
+    }
+    if(ComparisonFile[1] == ComparisonFile[2]){
+        error_massage <- paste('"ComparisonFile" should be unique.',
+                               'Input 2 unique file names such as c("Control","Knockdown")',
+                               sep="\n")
+        return(print(error_massage))
+    }
+    
+    ####################
     time_points <- length(hour) 
     group_number <- length(group)
     rpkm_file1 <- fread(filename1, header=T)
@@ -234,10 +249,8 @@ BridgeReport <- function(filename1 = "siStealth_compatible_genes_RefSeq_result_m
             p <- p + scale_y_log10(breaks=ybreaks, labels=ybreaks, limits=c(input$range_y[1],input$range_y[2]))
             
             if(is.null(r_squared_list) || is.null(half_life_list)){
-                
                 table_data <- data.frame(R2=c("NA","NA"), HalfLife=c("NA","NA"))
             }else{
-                
                 rpkm_data1 <- as.character(round(as.numeric(as.vector(as.matrix(rpkm_file1[input$text]))[rpkm_exp_st:rpkm_exp_ed]),digits=3))
                 rpkm_data2 <- as.character(round(as.numeric(as.vector(as.matrix(rpkm_file2[input$text]))[rpkm_exp_st:rpkm_exp_ed]),digits=3))
                 table_data <- data.frame(R2=as.character(r_squared_list), HalfLife=as.character(half_life_list), model=model_list)

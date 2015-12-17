@@ -82,5 +82,5 @@ BridgeRHalfSDGrubbsTest <- function(HalfLifeFile = "HalfLife_RPKM_mean_SD.txt",
 }
 
 ###TEST###
-setwd("C:/Users/Naoto/Documents/github/test_R_libraries/BridgeR_test/2015-11-30_PUM1_study_CTRL_comparison/test")
-BridgeRHalfSDGrubbsTest()
+#setwd("C:/Users/Naoto/Documents/github/test_R_libraries/BridgeR_test/2015-11-30_PUM1_study_CTRL_comparison/test")
+#BridgeRHalfSDGrubbsTest()

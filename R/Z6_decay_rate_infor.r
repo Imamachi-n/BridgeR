@@ -65,8 +65,10 @@ BridgeRHalfLifeComparison <- function(filename = "BridgeR_5C_HalfLife_calculatio
         Pvalue <- NULL
         div <- NULL
         if(ModelMode == "Raw_model" || ModelMode == "R2_selection"){
-            Pvalue <- as.numeric(as.vector(as.matrix(input_file[x, 48, with=F])))
-            div <- as.numeric(as.vector(as.matrix(input_file[x, 47, with=F])))
+            Pvalue_index <- (time_points + InforColumn + 13)*2 + 2
+            div_index <- (time_points + InforColumn + 13)*2 + 1
+            Pvalue <- as.numeric(as.vector(as.matrix(input_file[x, Pvalue_index, with=F])))
+            div <- as.numeric(as.vector(as.matrix(input_file[x, div_index, with=F])))
             if(is.na(half_1[x]) || is.na(half_2[x]) || is.nan(Pvalue)){
                 next
             }
